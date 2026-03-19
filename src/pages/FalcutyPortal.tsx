@@ -1,11 +1,11 @@
 import { IoFilter } from "react-icons/io5";
 import FacultyOverview from "../components/FacultyOverview";
-// import StaffRoster from "../components/StaffRoster";
-// import Compliance from "../components/Compliance";
+import StaffRoster from "../components/StaffRoster";
+import Compliance from "../components/Compliance";
 
 const FacultyPortal = () => {
     return (
-        <main className="min-h-screen w-full bg-[#F7F9FB] text-black px-4 py-6 md:px-8 md:py-10 lg:px-12">
+        <main className="w-full text-black px-5 py-7 sm:px-9 lg:px-[56px] lg:py-7">
             <div className="mx-auto w-full max-w-7xl space-y-10">
                 <section className="space-y-3">
                     <h1 className="text-2xl font-semibold md:text-4xl">Faculty Portal</h1>
@@ -39,15 +39,13 @@ const FacultyPortal = () => {
                     <FacultyOverview />
                 </section>
 
-
-                {/* <section>
+                <section>
                     <StaffRoster />
                 </section>
 
-
                 <section>
                     <Compliance />
-                </section> */}
+                </section>
             </div>
         </main>
     );
