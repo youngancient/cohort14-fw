@@ -1,4 +1,3 @@
-import type React from "react";
 import { useState } from "react";
 import "../token-interactions-page.css";
 import ListTile from "../components/ListTile";
@@ -10,10 +9,11 @@ const TokenInteractionPage = ({
 }: {
   tokenDetail: ITokenDetail;
 }) => {
-  const { balanceOf, allowance, mint, transfer, transferFrom, approve } =
+  const { loadToken, balanceOf, allowance, mint, transfer, transferFrom, approve } =
     useCall();
 
   const [expandedTile, setExpandedTile] = useState<string | null>("balanceOf");
+  const [loadtTokenAddress, setLoadTokenAddress] = useState("");
 
   const toggleTile = (title: string) => {
     setExpandedTile((prev) => (prev === title ? null : title));
@@ -102,8 +102,9 @@ const TokenInteractionPage = ({
               type="text"
               placeholder="Paste contract address - 0x..."
               className="load-token-input"
+              onChange={(e) => setLoadTokenAddress(e.target.value)}
             />
-            <button className="load-button">Load →</button>
+            <button className="load-button" onClick={() => loadToken(loadtTokenAddress)}>Load →</button>
           </div>
         </section>
 

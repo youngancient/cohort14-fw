@@ -292,5 +292,11 @@
   align-self: flex-start;
   font-size: 14px;
   font-weight: 600;
-  box-shadow: 0 0 12px rgba(56, 189, 248, 0.4);
+  box-shadow: 0 0 12px 2px rgba(56, 189, 248, 0.4);
+  transition: 0.3s ease-in-out;
+}
+
+.call-button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 0 8px 3px rgba(56, 189, 248, 0.4);
 }
