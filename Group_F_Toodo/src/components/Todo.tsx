@@ -34,6 +34,11 @@ export default function TodoList() {
   const filteredTasks = tasks.filter(task =>
     task.text.toLowerCase().includes(query.toLowerCase())
   );
+import { useTodo } from "../hooks/useHooks";
+
+export default function TodoList() {
+  const { tasks, markComplete, deleteTodo } = useTodo();
+
 
   return (
     <div
@@ -102,6 +107,48 @@ export default function TodoList() {
                     type="button"
                     disabled
                     className={`w-5 h-5 rounded flex items-center justify-center border-2 flex-shrink-0 transition-all duration-150 ${
+          {tasks.map((task) => (
+            <li
+              key={task.id}
+              className="flex items-center justify-between rounded-lg px-4 py-3 border border-slate-700/50 hover:border-slate-600 transition-colors"
+              style={{ backgroundColor: "#0d3347" }}
+            >
+              <div className="flex items-center gap-3 flex-1 min-w-0">
+                {/* Custom Checkbox */}
+                <button
+                  type="button"
+                  onClick={() => void markComplete(task.id)}
+                  disabled={task.completed}
+                  className={`w-5 h-5 rounded flex items-center justify-center border-2 flex-shrink-0 transition-all duration-150 ${
+                    task.completed
+                      ? "bg-yellow-400 border-yellow-400 cursor-not-allowed"
+                      : "bg-transparent border-slate-500 cursor-pointer"
+                  }`}
+                  aria-label={
+                    task.completed ? "Mark incomplete" : "Mark complete"
+                  }
+                >
+                  {task.completed && (
+                    <svg
+                      className="w-3 h-3 text-slate-900"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      strokeWidth={3}
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M5 13l4 4L19 7"
+                      />
+                    </svg>
+                  )}
+                </button>
+
+                {/* Task Text + Completed Time */}
+                <div className="flex flex-col min-w-0">
+                  <span
+                    className={`text-sm transition-all duration-150 truncate ${
                       task.completed
                         ? "bg-yellow-400 border-yellow-400"
                         : "bg-transparent border-slate-500"
@@ -185,6 +232,24 @@ export default function TodoList() {
           ) : (
             <li className="text-center text-slate-500 py-4">
               No tasks found matching "{query}"
+              {/* Action Buttons */}
+              <div className="flex items-center gap-2 ml-3 flex-shrink-0">
+                <button
+                  type="button"
+                  disabled
+                  className="bg-blue-500/60 text-white text-xs font-semibold px-4 py-1.5 rounded cursor-not-allowed"
+                  aria-disabled="true"
+                >
+                  Edit
+                </button>
+                <button
+                  type="button"
+                  onClick={() => void deleteTodo(task.id)}
+                  className="bg-red-500/60 text-white text-xs font-semibold px-4 py-1.5 rounded cursor-pointer"
+                >
+                  Delete
+                </button>
+              </div>
             </li>
           )}
         </ul>
