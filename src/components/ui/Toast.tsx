@@ -1,6 +1,6 @@
 import React from "react";
 import { useApp } from "../../context/AppContext";
-import { Toast as ToastType } from "../../types";
+import { type Toast as ToastType } from "../../types";
 
 function ToastItem({ toast }: { toast: ToastType }) {
   const { removeToast } = useApp();

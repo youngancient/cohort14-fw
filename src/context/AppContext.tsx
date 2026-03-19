@@ -5,7 +5,7 @@ import React, {
   useCallback,
   type ReactNode,
 } from "react";
-import { AppContextType, ModalType, Property, Toast } from "../types";
+import type { AppContextType, ModalType, Property, Toast } from "../types";
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
 

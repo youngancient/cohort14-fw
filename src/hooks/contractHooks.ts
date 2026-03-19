@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { PropertyFormData } from "../types";
+import { type PropertyFormData } from "../types";
 
 export interface UseCreatePropertyReturn {
   createProperty: (data: PropertyFormData) => Promise<void>;
