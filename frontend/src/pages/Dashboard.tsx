@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { VaultSidebar } from "@/components/VaultSidebar";
@@ -32,9 +32,26 @@ export default function Dashboard() {
   const [createOpen, setCreateOpen] = useState(false);
   const [filter, setFilter] = useState<FilterType>("all");
   const [page, setPage] = useState(1);
-  const [transactions, setTransactions] = useState<Transaction[]>(MOCK_TRANSACTIONS);
   const { toast } = useToast();
   const { account, connectWallet } = useWallet();
+
+  // Initialize transactions from localStorage or use mock data
+  const [transactions, setTransactions] = useState<Transaction[]>(() => {
+    const saved = localStorage.getItem("multisig_transactions");
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch {
+        return MOCK_TRANSACTIONS;
+      }
+    }
+    return MOCK_TRANSACTIONS;
+  });
+
+  // Save transactions to localStorage whenever they change
+  useEffect(() => {
+    localStorage.setItem("multisig_transactions", JSON.stringify(transactions));
+  }, [transactions]);
 
   const handleCreateTransaction = (recipient: string, amount: number) => {
     // Check if wallet is connected
