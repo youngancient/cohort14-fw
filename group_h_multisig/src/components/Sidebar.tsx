@@ -48,7 +48,7 @@ export default function Sidebar() {
             <div className="w-8 h-8 rounded flex items-center justify-center" style={{ backgroundColor: '#8B3A62' }}>
               <Square className="w-5 h-5" style={{ color: 'white', fill: 'white' }} />
             </div>
-            <h1 className="text-xl font-bold" style={{ color: '#1a1a1a' }}>The Vault</h1>
+            <h1 className="text-xl font-bold" style={{ color: '#1a1a1a' }}>Truva</h1>
           </div>
       </div>
 
