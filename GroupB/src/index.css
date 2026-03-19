@@ -1,0 +1,148 @@
+@import "tailwindcss";
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* Force scroll — overrides any Tailwind preflight blocking it */
+html {
+  scroll-behavior: smooth;
+  overflow-y: scroll;
+  height: auto;
+}
+
+body {
+  height: auto;
+  min-height: 100vh;
+}
+
+:root {
+  --bg-dark: #060914;
+  --bg-card: #0c1220;
+  --border-card: #1d283a;
+  --accent-blue: #38bdf8;
+  --accent-purple: #a855f7;
+  --accent-cyan: #00e5ff;
+  --accent-gold: #d4af37;
+  --text-primary: #f9fbff;
+  --text-secondary: #9ca3c9;
+  --text-muted: #8a94a6;
+  --grid-color: #0d1424;
+  --border-border: #1d283a;
+  --bg-darkest: #0a0f1e;
+  --bg-light: #141c2e;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
+    "Segoe UI", sans-serif;
+  background-color: var(--bg-dark);
+  background-image: linear-gradient(var(--grid-color) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+  background-size: 40px 40px;
+  color: var(--text-primary);
+  padding-bottom: 52px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+@media (max-width: 768px) {
+  body {
+    padding-bottom: 0;
+  }
+}
+
+.tf-root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.tf-navbar-links {
+  display: flex;
+  gap: 32px;
+  align-items: center;
+}
+
+.tf-nav-link {
+  font-size: 14px;
+  color: var(--text-secondary);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px 4px;
+  transition: all 0.2s;
+  font-weight: 500;
+  position: relative;
+}
+
+.tf-nav-link:hover {
+  color: var(--accent-blue);
+}
+
+.tf-nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: var(--accent-blue);
+  transition: width 0.2s;
+}
+
+.tf-nav-link:hover::after,
+.tf-nav-link--active::after {
+  width: 100%;
+}
+
+.tf-nav-link--active {
+  color: var(--accent-blue);
+}
+
+@media (max-width: 768px) {
+  .tf-navbar-links {
+    display: none;
+    position: absolute;
+    top: 60px;
+    left: 0;
+    right: 0;
+    flex-direction: column;
+    gap: 8px;
+    padding: 16px;
+    background: var(--bg-card);
+    border-bottom: 1px solid var(--border-card);
+  }
+
+  .tf-navbar-links.active {
+    display: flex;
+  }
+
+  .tf-nav-link {
+    padding: 12px 8px;
+  }
+}
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--accent-blue);
+  outline-offset: 2px;
+}
+
+@media (max-width: 640px) {
+  html {
+    font-size: 14px;
+  }
+}
+
+@media print {
+  nav, .fixed {
+    display: none;
+  }
+}
