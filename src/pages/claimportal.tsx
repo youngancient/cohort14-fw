@@ -4,14 +4,10 @@ import {
 	staffIcon,
 	studentIcon,
 } from './../components/icons'
-import PortalNav from './../components/PortalNav'
 
 function ClaimPortal() {
 	return (
-		<div className="min-h-screen bg-[#eceff3] text-[#5d6470]">
-			<div className="mx-auto flex w-full max-w-[1280px] lg:min-h-screen">
-				<PortalNav />
-				<main className="flex-1 px-5 py-7 sm:px-9 lg:px-[56px] lg:py-7">
+		<main className="px-5 py-7 sm:px-9 lg:px-[56px] lg:py-7">
 					<p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#1459d3]">Institutional Portal</p>
 					<h2 className="mt-1.5 text-[50px] font-semibold leading-none tracking-[-0.02em] text-[#161c25]">Claim Portal</h2>
 					<p className="mt-4 max-w-[780px] text-[13px] leading-8 text-[#4d5562]">
@@ -174,9 +170,7 @@ function ClaimPortal() {
 							</button>
 						</article>
 					</section>
-				</main>
-			</div>
-		</div>
+		</main>
 	)
 }
 

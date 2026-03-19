@@ -8,6 +8,7 @@ import {
 	usersIcon,
 } from './icons'
 import { navItems as defaultNavItems, type NavItem } from './navItems'
+import { NavLink } from 'react-router-dom'
 
 type PortalNavProps = {
 	items?: readonly NavItem[]
@@ -63,20 +64,22 @@ function PortalNav({
 
 			<nav className="mt-9 grid gap-2">
 				{items.map((item) => (
-					<button
+					<NavLink
 						key={item.label}
-						type="button"
-						className={`flex items-center gap-2.5 rounded-lg border px-3 py-2.5 text-left text-[16px] font-medium transition ${
-							item.active
-								? 'border-[#dfe3ea] bg-[#f5f7fa] text-[#1656d2]'
-								: 'border-transparent text-[#65748b] hover:border-[#dfe3ea] hover:bg-[#f3f5f8]'
-						}`}
+						to={item.path}
+						className={({ isActive }) =>
+							`flex items-center gap-2.5 rounded-lg border px-3 py-2.5 text-left text-[16px] font-medium transition ${
+								isActive
+									? 'border-[#dfe3ea] bg-[#f5f7fa] text-[#1656d2]'
+									: 'border-transparent text-[#65748b] hover:border-[#dfe3ea] hover:bg-[#f3f5f8]'
+							}`
+						}
 					>
 						<span className="grid h-5 w-5 place-items-center text-current">
 							<NavIcon icon={item.icon} />
 						</span>
 						<span>{item.label}</span>
-					</button>
+					</NavLink>
 				))}
 			</nav>
 

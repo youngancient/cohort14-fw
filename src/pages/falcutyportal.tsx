@@ -3,7 +3,7 @@ import FacultyOverview from "../components/FacultyOverview";
 
 const FacultyPortal = () => {
     return (
-        <main className="min-h-screen w-full bg-[#F7F9FB] text-black px-4 py-6 md:px-8 md:py-10 lg:px-12">
+        <main className="w-full text-black px-4 py-6 md:px-8 md:py-10 lg:px-12">
             <div className="mx-auto w-full max-w-7xl space-y-10">
                 <section className="space-y-3">
                     <h1 className="text-2xl font-semibold md:text-4xl">Faculty Portal</h1>
@@ -21,8 +21,12 @@ const FacultyPortal = () => {
                                     tabIndex={-1}
                                     className="dropdown-content menu z-10 w-52 rounded-box bg-base-100 p-2 shadow-sm"
                                 >
-                                    <li><a>Item 1</a></li>
-                                    <li><a>Item 2</a></li>
+                                    <li>
+                                        <button type="button">Item 1</button>
+                                    </li>
+                                    <li>
+                                        <button type="button">Item 2</button>
+                                    </li>
                                 </ul>
                             </div>
 

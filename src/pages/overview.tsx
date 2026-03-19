@@ -1,12 +1,13 @@
 import { studentIcon, staffIcon, walletIcon } from './../components/icons'
-import PortalNav from './../components/PortalNav'
+import { mockContractBalance, mockStaff, mockStudents } from '../data/mockData'
 
 function Overview() {
+	const firstStudent = mockStudents[0]
+	const secondStudent = mockStudents[1]
+	const firstStaff = mockStaff[0]
+
 	return (
-		<div className="min-h-screen bg-[#eceff3] text-[#5d6470]">
-			<div className="mx-auto flex w-full max-w-[1280px] lg:min-h-screen">
-				<PortalNav />
-				<main className="flex-1 px-5 py-7 sm:px-9 lg:px-[56px] lg:py-7">
+		<main className="px-5 py-7 sm:px-9 lg:px-[56px] lg:py-7">
 					<p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#1459d3]">Dashboard</p>
 					<h2 className="mt-1.5 text-[50px] font-semibold leading-none tracking-[-0.02em] text-[#161c25]">
 						Institutional Overview
@@ -20,7 +21,9 @@ function Overview() {
 							<div className="flex items-center justify-between">
 								<div>
 									<p className="text-xs font-semibold uppercase tracking-[0.15em] text-[#8a919d]">Total Students</p>
-									<h3 className="mt-3 text-[48px] font-semibold leading-none text-[#161c25]">2</h3>
+									<h3 className="mt-3 text-[48px] font-semibold leading-none text-[#161c25]">
+										{mockStudents.length}
+									</h3>
 									<p className="mt-2 text-[12px] font-semibold text-[#4e88de]">Institutional Growth</p>
 								</div>
 								<div className="grid h-[60px] w-[60px] place-items-center rounded-lg bg-[#e8f0fe] text-[#4e88de]">
@@ -33,7 +36,9 @@ function Overview() {
 							<div className="flex items-center justify-between">
 								<div>
 									<p className="text-xs font-semibold uppercase tracking-[0.15em] text-[#8a919d]">Total Staff</p>
-									<h3 className="mt-3 text-[48px] font-semibold leading-none text-[#161c25]">2</h3>
+									<h3 className="mt-3 text-[48px] font-semibold leading-none text-[#161c25]">
+										{mockStaff.length}
+									</h3>
 									<p className="mt-2 text-[12px] font-semibold text-[#4e88de]">Active Faculty</p>
 								</div>
 								<div className="grid h-[60px] w-[60px] place-items-center rounded-lg bg-[#e8f0fe] text-[#4e88de]">
@@ -46,7 +51,13 @@ function Overview() {
 							<div className="flex items-center justify-between">
 								<div>
 									<p className="text-xs font-semibold uppercase tracking-[0.15em] text-[#8a919d]">Contract Balance</p>
-									<h3 className="mt-3 text-[40px] font-semibold leading-none text-[#161c25]">$985,000</h3>
+									<h3 className="mt-3 text-[40px] font-semibold leading-none text-[#161c25]">
+										{mockContractBalance.toLocaleString('en-US', {
+											style: 'currency',
+											currency: 'USD',
+											maximumFractionDigits: 0,
+										})}
+									</h3>
 									<p className="mt-2 text-[12px] font-semibold text-[#d9651f]">Q4 Projected Revenue</p>
 								</div>
 								<div className="grid h-[60px] w-[60px] place-items-center rounded-lg bg-[#ffe5d5] text-[#d9651f]">
@@ -69,10 +80,14 @@ function Overview() {
 								<div className="flex items-center justify-between border-b border-[#eaedf1] py-4 first:pt-0 last:border-b-0 last:pb-0">
 									<div className="flex items-center gap-4">
 										<div className="grid h-10 w-10 place-items-center rounded-full bg-[#f0d4b8]">
-											<span className="text-[12px] font-bold text-[#a0713a]">AB</span>
+											<span className="text-[12px] font-bold text-[#a0713a]">
+												{firstStudent ? firstStudent.name.slice(0, 2).toUpperCase() : 'ST'}
+											</span>
 										</div>
 										<div>
-											<p className="text-[14px] font-semibold text-[#161c25]">Aisha Bello paid fees</p>
+											<p className="text-[14px] font-semibold text-[#161c25]">
+												{firstStudent ? `${firstStudent.name} paid fees` : 'Student paid fees'}
+											</p>
 											<p className="mt-0.5 text-[12px] text-[#8a919d]">Tuition Receipt #TR-9921 • 2 hours ago</p>
 										</div>
 									</div>
@@ -84,10 +99,14 @@ function Overview() {
 								<div className="flex items-center justify-between border-b border-[#eaedf1] py-4 first:pt-0 last:border-b-0 last:pb-0">
 									<div className="flex items-center gap-4">
 										<div className="grid h-10 w-10 place-items-center rounded-full bg-[#d9e4f8]">
-											<span className="text-[12px] font-bold text-[#4e88de]">DF</span>
+											<span className="text-[12px] font-bold text-[#4e88de]">
+												{firstStaff ? firstStaff.name.split(' ').slice(0, 2).map((part) => part[0]).join('').toUpperCase() : 'ST'}
+											</span>
 										</div>
 										<div>
-											<p className="text-[14px] font-semibold text-[#161c25]">Dr. Fatima Yusuf updated profile</p>
+											<p className="text-[14px] font-semibold text-[#161c25]">
+												{firstStaff ? `${firstStaff.name} updated profile` : 'Staff updated profile'}
+											</p>
 											<p className="mt-0.5 text-[12px] text-[#8a919d]">Faculty Credential Audit • 5 hours ago</p>
 										</div>
 									</div>
@@ -99,11 +118,15 @@ function Overview() {
 								<div className="flex items-center justify-between border-b border-[#eaedf1] py-4 first:pt-0 last:border-b-0 last:pb-0">
 									<div className="flex items-center gap-4">
 										<div className="grid h-10 w-10 place-items-center rounded-full bg-[#fef0d9]">
-											<span className="text-[12px] font-bold text-[#b89a55]">SO</span>
+											<span className="text-[12px] font-bold text-[#b89a55]">
+												{secondStudent ? secondStudent.name.slice(0, 2).toUpperCase() : 'ST'}
+											</span>
 										</div>
 										<div>
 											<p className="text-[14px] font-semibold text-[#161c25]">New Student Enrollment</p>
-											<p className="mt-0.5 text-[12px] text-[#8a919d]">Samuel Okafor registered • Yesterday</p>
+											<p className="mt-0.5 text-[12px] text-[#8a919d]">
+												{secondStudent ? `${secondStudent.name} registered` : 'Student registered'} • Yesterday
+											</p>
 										</div>
 									</div>
 									<span className="inline-block rounded-full bg-[#fef3e8] px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-[#b89a55]">
@@ -166,9 +189,7 @@ function Overview() {
 							</div>
 						</aside>
 					</div>
-				</main>
-			</div>
-		</div>
+		</main>
 	)
 }
 
