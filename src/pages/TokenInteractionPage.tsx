@@ -1,5 +1,5 @@
 import { useState } from "react";
-import "../token-interactions-page.css";
+import "../styles/token-interactions-page.css";
 import ListTile from "../components/ListTile";
 import type { ITokenDetail } from "../interface/ITokenDetail";
 import useCall from "../hooks/useCall";
