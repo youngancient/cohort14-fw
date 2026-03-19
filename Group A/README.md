@@ -1,1 +1,0 @@
-deployment link: https://schoolmanagement-ui-five.vercel.app/
