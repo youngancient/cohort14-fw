@@ -40,4 +40,13 @@ contract ERC20Test is Test {
     assert(user2AfterBalance == STARTING_AMOUNT);
   
   }
+
+  function test__Approve() public {
+    uint256 approveAmount = 500;
+    
+    vm.prank(user1);
+    token.approve(user2, approveAmount);
+
+    assertEq(token.allowance(user1, user2), approveAmount);
+  }
 }
