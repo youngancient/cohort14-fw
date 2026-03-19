@@ -1,6 +1,6 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { Transaction, TxnStatus, truncateAddress, formatAmount, STATUS_LABELS, STATUS_CLASSES } from "@/lib/multisig-types";
-import { MOCK_THRESHOLD, MOCK_TOKEN_SYMBOL, MOCK_TXN_SIGNERS } from "@/lib/mock-data";
+import { MOCK_THRESHOLD, MOCK_TOKEN_SYMBOL, MOCK_TXN_SIGNERS, MOCK_TRANSACTIONS } from "@/lib/mock-data";
 import { Button } from "@/components/ui/button";
 import { ThresholdTracker } from "./ThresholdTracker";
 import { X } from "lucide-react";
@@ -14,6 +14,79 @@ export function TxnDetailPanel({ txn, onClose }: TxnDetailPanelProps) {
   if (!txn) return null;
 
   const signers = MOCK_TXN_SIGNERS.filter((s) => s.txnId === txn.id);
+
+  const handleInitialize = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+
+    console.log("Initialize");
+
+    // let oldTxn = MOCK_TRANSACTIONS.find((t) => t.id === txn.id);
+    // if (oldTxn) {
+    //   console.log(oldTxn, txn);
+    // }
+
+    if (txn.executed || txn.initiatorApproved || txn.status === TxnStatus.canceled || txn.status === TxnStatus.successful || txn.approvals >= MOCK_THRESHOLD) {
+      throw new Error("Transaction cannot be initialized")
+    }
+
+    txn.initiatorApproved = true;
+    txn.approvals += 1;
+
+    if (txn.approvals === MOCK_THRESHOLD) {
+      txn.status = TxnStatus.successful;
+      txn.executed = true;
+      txn.executedTime = Date.now();
+
+      console.log("Initiated and Executed");
+    }
+
+    console.log("Initiated");
+
+    return;
+  };
+
+  const handleAuthorize = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    console.log("Authorize");
+
+    if (txn.executed || txn.approvals >= MOCK_THRESHOLD || txn.status === TxnStatus.canceled) {
+      throw new Error("Transaction cannot be authorized")
+    }
+
+    txn.approvals += 1;
+
+    if (txn.approvals === MOCK_THRESHOLD) {
+      txn.status = TxnStatus.successful;
+      txn.executed = true;
+      txn.executedTime = Date.now();
+
+      console.log("Authorised and Executed");
+      
+      return;
+    }
+
+    console.log("Authorised");
+    
+    return;
+
+  };
+
+  const handleCancel = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    console.log("Cancel");
+
+    if (txn.executed || txn.status === TxnStatus.canceled || txn.status === TxnStatus.successful || txn.approvals >= MOCK_THRESHOLD) {
+      throw new Error("Transaction cannot be canceled")
+    }
+
+    txn.status = TxnStatus.canceled;
+    txn.executed = true;
+    txn.executedTime = Date.now();
+
+    console.log("Canceled");
+    
+
+  };
 
   return (
     <AnimatePresence>
@@ -105,12 +178,12 @@ export function TxnDetailPanel({ txn, onClose }: TxnDetailPanelProps) {
         {txn.status === TxnStatus.pending && (
           <div className="flex gap-3 pt-4 border-t border-border">
             {!txn.initiatorApproved && (
-              <Button variant="action" className="flex-1">Initialize</Button>
+              <Button variant="action" onClick={handleInitialize} className="flex-1">Initialize</Button>
             )}
             {txn.initiatorApproved && txn.approvals < MOCK_THRESHOLD && (
-              <Button variant="authorize" className="flex-1">Authorize</Button>
+              <Button variant="authorize" onClick={handleAuthorize} className="flex-1">Authorize</Button>
             )}
-            <Button variant="surface" className="flex-1">Cancel</Button>
+            <Button variant="surface" onClick={handleCancel} className="flex-1">Cancel</Button>
           </div>
         )}
       </motion.div>
