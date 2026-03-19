@@ -73,6 +73,7 @@ export const useTodo = () => {
   const [inputValue, setInputValue] = useState("");
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editingText, setEditingText] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
   const [error, setError] = useState("");
 
   const updateAndPersist = useCallback((updater: (prev: Task[]) => Task[]) => {
@@ -187,6 +188,8 @@ export const useTodo = () => {
     tasks,
     inputValue,
     setInputValue,
+    searchQuery,
+    setSearchQuery,
     editingId,
     editingText,
     setEditingText,

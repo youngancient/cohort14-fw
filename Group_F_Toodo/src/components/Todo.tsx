@@ -7,6 +7,8 @@ export default function TodoList() {
     tasks,
     inputValue,
     setInputValue,
+    searchQuery,
+    setSearchQuery,
     editingId,
     editingText,
     setEditingText,
@@ -34,6 +36,10 @@ export default function TodoList() {
     if (e.key === "Enter") confirmEdit(id);
     if (e.key === "Escape") cancelEdit();
   };
+
+  const filteredTasks = tasks.filter((task) =>
+    task.text.toLowerCase().includes(searchQuery.toLowerCase()),
+  );
 
   return (
     <div
@@ -103,9 +109,21 @@ export default function TodoList() {
         {/* Spacer when no error */}
         {!error && <div className="mb-4" />}
 
+        {/* Search Row */}
+        <div className="mb-6">
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Search tasks..."
+            className="w-full rounded-lg px-4 py-2 text-slate-300 placeholder-slate-500 outline-none text-xs border border-slate-700 focus:border-yellow-400 transition-colors"
+            style={{ backgroundColor: "transparent" }}
+          />
+        </div>
+
         {/* Task List */}
         <ul className="flex flex-col gap-2">
-          {tasks.map((task) => (
+          {filteredTasks.map((task) => (
             <li
               key={task.id}
               className="flex items-center justify-between rounded-lg px-4 py-3 border border-slate-700/50 hover:border-slate-600 transition-colors"
@@ -249,9 +267,11 @@ export default function TodoList() {
             </li>
           ))}
 
-          {tasks.length === 0 && (
+          {filteredTasks.length === 0 && (
             <li className="text-center text-slate-500 py-8 text-sm">
-              No tasks yet. Add one above!
+              {searchQuery
+                ? `No tasks found matching "${searchQuery}"`
+                : "No tasks yet. Add one above!"}
             </li>
           )}
         </ul>
