@@ -8,18 +8,19 @@ const ERC20Page = memo(function ERC20Page() {
 
   useEffect(() => {
     const canvas = canvasRef.current
-    if (!canvas) return
-    const ctx = canvas.getContext('2d')!
+if (!canvas) return
+const ctx = canvas.getContext('2d')!
 
-    let W = canvas.width  = window.innerWidth
-    let H = canvas.height = window.innerHeight
-    let raf: number
+let W = 0, H = 0
+let raf: number
 
-    const onResize = () => {
-      W = canvas.width  = window.innerWidth
-      H = canvas.height = window.innerHeight
-    }
-    window.addEventListener('resize', onResize)
+const onResize = () => {
+  const parent = canvas.parentElement
+  W = canvas.width  = parent ? parent.offsetWidth : window.innerWidth
+  H = canvas.height = window.innerHeight  // always full viewport height for the orbs
+}
+onResize()
+window.addEventListener('resize', onResize)
 
     /* ── gold light orbs ──
        Each orb is a slow-drifting radial gradient.
@@ -163,25 +164,25 @@ const ERC20Page = memo(function ERC20Page() {
   }, [])
 
   return (
-    <div className="w-full relative" style={{ background: '#000000' }}>
+<div className="relative min-h-screen flex flex-col" style={{ background: 'transparent' }}>
 
       {/* Gold light canvas — fills entire viewport behind everything */}
       <canvas
         ref={canvasRef}
-        className="fixed inset-0 z-0 w-full h-full"
+        className="absolute inset-0 z-0 w-full h-full"
         style={{ pointerEvents: 'none' }}
       />
 
       {/* Very subtle noise grain texture over the canvas */}
       <div
-        className="fixed inset-0 z-[1] pointer-events-none"
+        className="absolute inset-0 z-[1] pointer-events-none"
         style={{
           backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E")`,
           opacity: 0.04,
         }}
       />
 
-      {/* Connect Wallet button */}
+      {/* Connect Wallet button
       <button
         className="fixed top-5 right-7 z-40 flex items-center gap-2 font-['DM_Mono'] text-[9px] tracking-[0.28em] uppercase transition-all duration-[350ms]"
         style={{
@@ -221,9 +222,10 @@ const ERC20Page = memo(function ERC20Page() {
           }}
         />
         Connect Wallet
-      </button>
+      </button> */}
 
       {/* Main content — above canvas */}
+
       <div className="relative z-20 w-full">
         <ERC20Panel visible={true} />
         <CryptoTicker />

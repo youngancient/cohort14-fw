@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import gsap from 'gsap'
 
 interface ERC20PanelProps {
@@ -15,12 +15,17 @@ export default function ERC20Panel({ visible }: ERC20PanelProps) {
   const lineRef    = useRef<HTMLDivElement>(null)
   const btnRef     = useRef<HTMLButtonElement>(null)
   const hasAnimated = useRef(false)
+  const [videoAvailable, setVideoAvailable] = useState(true)
 
   useEffect(() => {
+    const panel = panelRef.current
+    if (!panel) return
+
+    gsap.set(panel, { opacity: 0 })
+
     if (!visible || hasAnimated.current) return
     hasAnimated.current = true
 
-    const panel   = panelRef.current
     const eyebrow = eyebrowRef.current
     const title   = titleRef.current
     const intro   = introRef.current
@@ -28,11 +33,11 @@ export default function ERC20Panel({ visible }: ERC20PanelProps) {
     const feats   = featsRef.current
     const line    = lineRef.current
     const btn     = btnRef.current
-    if (!panel || !eyebrow || !title || !intro || !stats || !feats || !line || !btn) return
+    if (!eyebrow || !title || !intro || !stats || !feats || !line || !btn) return
 
     gsap.set([eyebrow, title, intro, stats, feats], { opacity: 0, y: 28 })
-    gsap.set(line,  { scaleX: 0 })
-    gsap.set(btn,   { opacity: 0, y: 18 })
+    gsap.set(line, { scaleX: 0 })
+    gsap.set(btn,  { opacity: 0, y: 18 })
 
     gsap.to(panel, {
       opacity: 1, duration: 1.1, ease: 'power2.out',
@@ -56,17 +61,42 @@ export default function ERC20Panel({ visible }: ERC20PanelProps) {
   return (
     <div
       ref={panelRef}
-      className="relative inset-0 z-30 flex items-center justify-center pointer-events-none"
-      style={{ opacity: 0, padding: 'clamp(12px, 4vw, 80px) clamp(12px, 3vw, 48px) clamp(12px, 4vw, 80px)' }}
+      className="relative w-full flex items-center justify-center pointer-events-none z-30"
+      style={{
+        padding: 'clamp(12px, 4vw, 80px) clamp(12px, 3vw, 48px) clamp(12px, 4vw, 80px)',
+        minHeight: '100vh',
+      }}
     >
+      {/* Wave video background — silently hidden if file not found */}
+      {videoAvailable && (
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          onError={() => setVideoAvailable(false)}
+          style={{
+            position: 'absolute',
+            inset: 0,
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
+            opacity: 0.12,
+            pointerEvents: 'none',
+            zIndex: 0,
+          }}
+        >
+          <source src="/waves.mp4" type="video/mp4" />
+        </video>
+      )}
+
       <div className="relative z-[1] w-full max-w-[960px] grid grid-cols-1 md:grid-cols-2 gap-x-[32px] md:gap-x-[72px] gap-y-[32px] md:gap-y-[48px] items-start px-4 md:px-0">
         <div>
           <div
             ref={eyebrowRef}
             className="text-[9px] tracking-[0.38em] uppercase mb-4 flex items-center gap-[10px]"
             style={{ color: 'var(--accent-cyan)', textShadow: '0 0 14px rgba(0, 229, 255, 0.6)' }}
-          >
-          </div>
+          />
 
           <div
             ref={titleRef}
@@ -101,6 +131,7 @@ export default function ERC20Panel({ visible }: ERC20PanelProps) {
             contracts directly to mainnet. Name it. Supply it. Launch it.
           </p>
         </div>
+
         <div className="flex flex-col gap-5">
           <div ref={statsRef} className="grid grid-cols-2 gap-3">
             {[
@@ -111,14 +142,16 @@ export default function ERC20Panel({ visible }: ERC20PanelProps) {
             ].map(({ val, key }) => (
               <div
                 key={key}
-                className="relative  p-[14px_16px] backdrop-blur-[6px]"
+                className="relative p-[14px_16px] backdrop-blur-[6px]"
                 style={{
                   background: 'rgba(0,0,0,0.32)',
                   border: '1px solid rgba(0,229,255,0.22)',
                 }}
               >
-                <div className="absolute top-0 left-0 right-0 h-[1.5px]"
-                     style={{ background: 'linear-gradient(90deg,transparent,rgba(0,229,255,0.6),transparent)' }} />
+                <div
+                  className="absolute top-0 left-0 right-0 h-[1.5px]"
+                  style={{ background: 'linear-gradient(90deg,transparent,rgba(0,229,255,0.6),transparent)' }}
+                />
                 <div
                   className="font-['Bebas_Neue'] text-[30px] tracking-[0.04em] leading-none"
                   style={{ color: 'var(--accent-cyan)', textShadow: '0 0 16px rgba(0,229,255,0.5)' }}
@@ -130,6 +163,7 @@ export default function ERC20Panel({ visible }: ERC20PanelProps) {
               </div>
             ))}
           </div>
+
           <div ref={featsRef} className="flex flex-col gap-0">
             {[
               {
@@ -166,6 +200,7 @@ export default function ERC20Panel({ visible }: ERC20PanelProps) {
               </div>
             ))}
           </div>
+
           <button
             ref={btnRef}
             className="inline-flex items-center gap-[10px] font-['DM_Mono'] text-[10px] tracking-[0.28em] uppercase backdrop-blur-[8px] pointer-events-auto group"
@@ -180,27 +215,28 @@ export default function ERC20Panel({ visible }: ERC20PanelProps) {
             }}
             onMouseEnter={e => {
               const el = e.currentTarget
-              el.style.background    = 'rgba(0,229,255,0.12)'
-              el.style.borderColor   = 'rgba(0,229,255,0.85)'
-              el.style.color         = '#fff'
-              el.style.textShadow    = '0 0 20px rgba(0,229,255,0.8)'
-              el.style.boxShadow     = '0 0 28px rgba(0,229,255,0.18), inset 0 0 20px rgba(0,229,255,0.04)'
+              el.style.background  = 'rgba(0,229,255,0.12)'
+              el.style.borderColor = 'rgba(0,229,255,0.85)'
+              el.style.color       = '#fff'
+              el.style.textShadow  = '0 0 20px rgba(0,229,255,0.8)'
+              el.style.boxShadow   = '0 0 28px rgba(0,229,255,0.18), inset 0 0 20px rgba(0,229,255,0.04)'
             }}
             onMouseLeave={e => {
               const el = e.currentTarget
-              el.style.background    = 'rgba(0,0,0,0.35)'
-              el.style.borderColor   = 'rgba(0,229,255,0.45)'
-              el.style.color         = 'var(--accent-cyan)'
-              el.style.textShadow    = '0 0 12px rgba(0,229,255,0.5)'
-              el.style.boxShadow     = ''
+              el.style.background  = 'rgba(0,0,0,0.35)'
+              el.style.borderColor = 'rgba(0,229,255,0.45)'
+              el.style.color       = 'var(--accent-cyan)'
+              el.style.textShadow  = '0 0 12px rgba(0,229,255,0.5)'
+              el.style.boxShadow   = ''
             }}
           >
             Create Token
             <span className="inline-block transition-transform duration-200 group-hover:translate-x-1">→</span>
           </button>
-
         </div>
       </div>
+
+      {/* Bottom divider line */}
       <div
         ref={lineRef}
         className="absolute"

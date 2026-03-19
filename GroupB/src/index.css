@@ -6,6 +6,18 @@
   box-sizing: border-box;
 }
 
+/* Force scroll — overrides any Tailwind preflight blocking it */
+html {
+  scroll-behavior: smooth;
+  overflow-y: scroll;
+  height: auto;
+}
+
+body {
+  height: auto;
+  min-height: 100vh;
+}
+
 :root {
   --bg-dark: #060914;
   --bg-card: #0c1220;
@@ -32,8 +44,9 @@ body {
     linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
   background-size: 40px 40px;
   color: var(--text-primary);
-  min-height: 100vh;
   padding-bottom: 52px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 @media (max-width: 768px) {
@@ -48,7 +61,6 @@ body {
   flex-direction: column;
 }
 
-/* Navbar Links */
 .tf-navbar-links {
   display: flex;
   gap: 32px;
@@ -91,7 +103,6 @@ body {
   color: var(--accent-blue);
 }
 
-/* Mobile menu styles (for future implementation) */
 @media (max-width: 768px) {
   .tf-navbar-links {
     display: none;
@@ -115,7 +126,6 @@ body {
   }
 }
 
-/* Global focus states and accessibility */
 a:focus-visible,
 button:focus-visible,
 input:focus-visible,
@@ -125,25 +135,12 @@ select:focus-visible {
   outline-offset: 2px;
 }
 
-/* Smooth scroll behavior */
-html {
-  scroll-behavior: smooth;
-}
-
-/* Ensure proper text rendering */
-body {
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-/* Responsive typography scaling */
 @media (max-width: 640px) {
   html {
     font-size: 14px;
   }
 }
 
-/* Print styles */
 @media print {
   nav, .fixed {
     display: none;
