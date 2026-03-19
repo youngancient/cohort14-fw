@@ -2,6 +2,7 @@ import { Shield, LayoutDashboard, History, Users, Settings, Wallet } from "lucid
 import { truncateAddress } from "@/lib/multisig-types";
 import { MOCK_SIGNERS, MOCK_CONTRACT_ADDRESS, MOCK_VAULT_BALANCE, MOCK_TOKEN_SYMBOL } from "@/lib/mock-data";
 import { formatAmount } from "@/lib/multisig-types";
+import { useWallet } from "@/hooks/useWallet";
 
 const NAV_ITEMS = [
   { label: "Dashboard", icon: LayoutDashboard, active: true },
@@ -11,6 +12,7 @@ const NAV_ITEMS = [
 ];
 
 export function VaultSidebar() {
+    const { account, connectWallet } = useWallet();
   return (
     <aside className="w-[280px] min-h-screen bg-sidebar border-r border-sidebar-border flex flex-col shrink-0">
       {/* Logo */}
@@ -63,14 +65,29 @@ export function VaultSidebar() {
         </ul>
       </nav>
 
-      {/* Connected wallet */}
-      <div className="p-4 border-t border-sidebar-border">
-        <div className="flex items-center gap-2 px-3 py-2 bg-muted/30 rounded-md border border-border">
-          <div className="w-2 h-2 rounded-full bg-success glow-dot" />
-          <span className="font-mono text-xs text-foreground/70">{truncateAddress(MOCK_SIGNERS[0])}</span>
-        </div>
-        <span className="text-[10px] text-muted-foreground mt-2 block px-1">Connected · Signer</span>
+     {/* Connected wallet */}
+<div className="p-4 border-t border-sidebar-border">
+  {account ? (
+    <>
+      <div className="flex items-center gap-2 px-3 py-2 bg-muted/30 rounded-md border border-border">
+        <div className="w-2 h-2 rounded-full bg-success glow-dot" />
+        <span className="font-mono text-xs text-foreground/70">
+          {truncateAddress(account)}
+        </span>
       </div>
+      <span className="text-[10px] text-muted-foreground mt-2 block px-1">
+        Connected · Signer
+      </span>
+    </>
+  ) : (
+    <button
+      onClick={connectWallet}
+      className="w-full px-3 py-2 rounded-md bg-primary text-white text-sm hover:opacity-90 transition"
+    >
+      Connect Wallet
+    </button>
+  )}
+</div>
     </aside>
   );
 }

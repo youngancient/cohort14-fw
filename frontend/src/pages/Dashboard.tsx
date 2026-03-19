@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { VaultSidebar } from "@/components/VaultSidebar";
@@ -8,6 +8,8 @@ import { CreateTxnPanel } from "@/components/CreateTxnPanel";
 import { MOCK_TRANSACTIONS, MOCK_TXN_SIGNERS, MOCK_THRESHOLD, MOCK_SIGNERS } from "@/lib/mock-data";
 import { TxnStatus, type Transaction } from "@/lib/multisig-types";
 import { Plus, Filter } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import { useWallet } from "@/hooks/useWallet";
 
 type FilterType = "all" | "pending" | "successful" | "canceled";
 
@@ -30,23 +32,74 @@ export default function Dashboard() {
   const [createOpen, setCreateOpen] = useState(false);
   const [filter, setFilter] = useState<FilterType>("all");
   const [page, setPage] = useState(1);
+  const { toast } = useToast();
+  const { account, connectWallet } = useWallet();
+
+  // Initialize transactions from localStorage or use mock data
+  const [transactions, setTransactions] = useState<Transaction[]>(() => {
+    const saved = localStorage.getItem("multisig_transactions");
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch {
+        return MOCK_TRANSACTIONS;
+      }
+    }
+    return MOCK_TRANSACTIONS;
+  });
+
+  // Save transactions to localStorage whenever they change
+  useEffect(() => {
+    localStorage.setItem("multisig_transactions", JSON.stringify(transactions));
+  }, [transactions]);
+
+  const handleCreateTransaction = (recipient: string, amount: number) => {
+    // Check if wallet is connected
+    if (!account) {
+      toast({
+        title: "Wallet Required",
+        description: "Please connect your wallet first",
+        variant: "destructive",
+      });
+      connectWallet();
+      return;
+    }
+
+    const newTxn: Transaction = {
+      id: transactions.length + 1,
+      to: recipient,
+      amount: amount,
+      approvals: 0,
+      initiatorApproved: false,
+      executed: false,
+      status: TxnStatus.pending,
+      txnInitiator: account, // Use connected wallet address
+      executedTime: 0,
+    };
+
+    setTransactions([newTxn, ...transactions]);
+    toast({
+      title: "Transaction Created",
+      description: `Transaction #${newTxn.id} submitted successfully`,
+    });
+  };
 
   const perPage = 10;
   const statusFilter = FILTER_MAP[filter];
   const filtered = statusFilter === null
-    ? MOCK_TRANSACTIONS
-    : MOCK_TRANSACTIONS.filter((t) => t.status === statusFilter);
+    ? transactions
+    : transactions.filter((t) => t.status === statusFilter);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / perPage));
   const paginated = filtered.slice((page - 1) * perPage, page * perPage);
 
-  const selectedTxn = selectedTxnId ? MOCK_TRANSACTIONS.find((t) => t.id === selectedTxnId) ?? null : null;
+  const selectedTxn = selectedTxnId ? transactions.find((t) => t.id === selectedTxnId) ?? null : null;
 
   const getSignerAddresses = (txnId: number) =>
     MOCK_TXN_SIGNERS.filter((s) => s.txnId === txnId).map((s) => s.signerAddress);
 
-  const pendingCount = MOCK_TRANSACTIONS.filter((t) => t.status === TxnStatus.pending).length;
-  const needsAction = MOCK_TRANSACTIONS.filter(
+  const pendingCount = transactions.filter((t) => t.status === TxnStatus.pending).length;
+  const needsAction = transactions.filter(
     (t) => t.status === TxnStatus.pending && t.initiatorApproved && t.approvals < MOCK_THRESHOLD
   ).length;
 
@@ -72,8 +125,8 @@ export default function Dashboard() {
         {/* Stats */}
         <div className="px-8 py-6 grid grid-cols-3 gap-4">
           {[
-            { label: "Total Transactions", value: MOCK_TRANSACTIONS.length.toString() },
-            { label: "Active Signers", value: MOCK_SIGNERS.length.toString() + " / 5" },
+            { label: "Total Transactions", value: transactions.length.toString() },
+            { label: "Active Signers", value: account ? "1 / 5" : "0 / 5" },
             { label: "Threshold", value: MOCK_THRESHOLD.toString() + " signatures" },
           ].map((stat) => (
             <div key={stat.label} className="bg-surface border border-border rounded-lg p-4">
@@ -151,7 +204,11 @@ export default function Dashboard() {
         </div>
       </main>
 
-      <CreateTxnPanel open={createOpen} onClose={() => setCreateOpen(false)} />
+      <CreateTxnPanel
+        open={createOpen}
+        onClose={() => setCreateOpen(false)}
+        onCreateTransaction={handleCreateTransaction}
+      />
     </div>
   );
 }
