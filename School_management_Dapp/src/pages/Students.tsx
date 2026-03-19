@@ -9,9 +9,15 @@ export function Students() {
   const [wallet, setWallet] = useState('');
 
   useEffect(() => {
-    return subscribe(() => {
+    // Get the unsubscribe function
+    const unsubscribe = subscribe(() => {
       setVersion((value) => value + 1);
     });
+    
+    // Return a cleanup function that doesn't return the boolean from unsubscribe
+    return () => {
+      unsubscribe(); // This returns a boolean, but we ignore it
+    };
   }, []);
 
   const students = getStudents();

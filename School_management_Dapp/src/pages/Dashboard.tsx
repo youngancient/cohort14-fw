@@ -1,15 +1,18 @@
 import { useEffect, useState } from 'react';
-import { getStudents, getTreasuryBalance, subscribe } from '../lib/mockData';
+import { getStudents, getTreasuryBalance } from '../lib/mockData';
+
 
 export function Dashboard() {
   const [, setVersion] = useState(0);
 
-  useEffect(() => {
-    return subscribe(() => {
-      setVersion((value) => value + 1);
-    });
-  }, []);
-
+ useEffect(() => {
+  // your existing code stays exactly the same
+  
+  // Just change the return line to this:
+  return () => {
+    // cleanup code here (if needed) - no return value
+  };
+}, [])
   const students = getStudents();
   const treasuryBalance = getTreasuryBalance();
   const studentCount = students.length;

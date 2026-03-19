@@ -13,11 +13,7 @@ export function Payments() {
   const [, setVersion] = useState(0);
   const [studentId, setStudentId] = useState('');
 
-  useEffect(() => {
-    return subscribe(() => {
-      setVersion((value) => value + 1);
-    });
-  }, []);
+ 
 
   const parsedStudentId = Number(studentId) || 0;
   const student = parsedStudentId ? getStudentById(parsedStudentId) : undefined;
