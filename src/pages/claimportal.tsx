@@ -1,104 +1,16 @@
 import {
 	approveIcon,
-	capIcon,
-	cardIcon,
 	dropIcon,
-	ledgerIcon,
-	logoutIcon,
-	settingsIcon,
 	staffIcon,
 	studentIcon,
-	usersIcon,
 } from './../components/icons'
-
-const navItems = [
-	{ label: 'Overview', active: false, icon: 'grid' },
-	{ label: 'Academic Ledger', active: false, icon: 'ledger' },
-	{ label: 'Student Registry', active: false, icon: 'users' },
-	{ label: 'Faculty Portal', active: false, icon: 'cap' },
-	{ label: 'Claims & Billing', active: true, icon: 'card' },
-] as const
-
-function NavIcon({ icon }: { icon: (typeof navItems)[number]['icon'] }) {
-	if (icon === 'ledger') {
-		return (
-			<img src={ledgerIcon} alt="Academic Ledger" className="h-4.5 w-4.5" />
-		)
-	}
-
-	if (icon === 'users') {
-		return (
-			<img src={usersIcon} alt="Student Registry" className="h-4.5 w-4.5" />
-		)
-	}
-
-	if (icon === 'cap') {
-		return (
-			<img src={capIcon} alt="Faculty Portal" className="h-4.5 w-4.5" />
-		)
-	}
-
-	if (icon === 'card') {
-		return (
-			<img src={cardIcon} alt="Claims & Billing" className="h-4.5 w-4.5" />
-		)
-	}
-
-    return null
-}
+import PortalNav from './../components/PortalNav'
 
 function ClaimPortal() {
 	return (
 		<div className="min-h-screen bg-[#eceff3] text-[#5d6470]">
 			<div className="mx-auto flex w-full max-w-[1280px] lg:min-h-screen">
-				<aside className="flex w-full flex-col border-b border-[#dfe3ea] bg-[#eceff3] px-4 py-5 lg:sticky lg:top-0 lg:h-screen lg:w-[236px] lg:self-start lg:border-b-0 lg:border-r lg:px-4 lg:py-4">
-					<div>
-						<h1 className="text-[34px] font-semibold leading-none text-[#1f2937]">ExcelSchool</h1>
-						<p className="mt-1 text-[11px] font-medium tracking-[0.01em] text-[#7b8696]">Academic Management</p>
-					</div>
-
-					<nav className="mt-9 grid gap-2">
-						{navItems.map((item) => (
-							<button
-								key={item.label}
-								type="button"
-								className={`flex items-center gap-2.5 rounded-lg border px-3 py-2.5 text-left text-[16px] font-medium transition ${
-									item.active
-										? 'border-[#dfe3ea] bg-[#f5f7fa] text-[#1656d2]'
-										: 'border-transparent text-[#65748b] hover:border-[#dfe3ea] hover:bg-[#f3f5f8]'
-								}`}
-							>
-								<span className="grid h-5 w-5 place-items-center text-current">
-									<NavIcon icon={item.icon} />
-								</span>
-								<span>{item.label}</span>
-							</button>
-						))}
-					</nav>
-
-					<div className="mt-8 grid gap-2 border-t border-[#d8dde5] pt-5 lg:mt-auto">
-						<button
-							type="button"
-							className="flex items-center gap-2.5 rounded-lg border border-transparent px-3 py-2 text-left text-[16px] font-medium text-[#65748b] transition hover:border-[#dfe3ea] hover:bg-[#f3f5f8]"
-						>
-							<span className="grid h-5 w-5 place-items-center">
-								<img src={settingsIcon} alt="Settings" className="h-4.5 w-4.5" />
-							</span>
-							<span>Settings</span>
-						</button>
-
-						<button
-							type="button"
-							className="flex items-center gap-2.5 rounded-lg border border-transparent px-3 py-2 text-left text-[16px] font-medium text-[#65748b] transition hover:border-[#dfe3ea] hover:bg-[#f3f5f8]"
-						>
-							<span className="grid h-5 w-5 place-items-center">
-								<img src={logoutIcon} alt="Logout" className="h-4.5 w-4.5" />
-							</span>
-							<span>Logout</span>
-						</button>
-					</div>
-				</aside>
-
+				<PortalNav />
 				<main className="flex-1 px-5 py-7 sm:px-9 lg:px-[56px] lg:py-7">
 					<p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#1459d3]">Institutional Portal</p>
 					<h2 className="mt-1.5 text-[50px] font-semibold leading-none tracking-[-0.02em] text-[#161c25]">Claim Portal</h2>
