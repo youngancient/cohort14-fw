@@ -105,7 +105,7 @@ export const TransactionCard: React.FC<TransactionCardProps> = ({
               {transaction.type.replace('_', ' ')}
             </span>
             {transaction.status === 'pending' && (
-              <span className="text-xs text-gray-400">
+              <span className="text-sm text-gray-400">
                 ({confirmationCount}/{transaction.requiredConfirmations} confirmations)
               </span>
             )}
@@ -125,14 +125,14 @@ export const TransactionCard: React.FC<TransactionCardProps> = ({
             {transaction.type === 'receive' ? '+' : '-'}
             {transaction.value} TOKEN
           </p>
-          <p className="text-gray-500 text-xs mt-0.5">
+          <p className="text-gray-500 text-sm mt-0.5">
             {new Date(transaction.createdAt).toLocaleDateString()}
           </p>
         </div>
 
         {/* Status badge */}
         <div
-          className={`px-3 py-1 rounded-full text-xs font-medium border shrink-0 ${
+          className={`px-3 py-1 rounded-full text-sm font-medium border shrink-0 ${
             statusBg[transaction.status]
           }`}
         >
@@ -169,12 +169,12 @@ export const TransactionCard: React.FC<TransactionCardProps> = ({
               {/* Recipient */}
               <div className="bg-gray-900 rounded-lg p-3 flex items-center gap-2">
                 <div className="w-8 h-8 rounded-full bg-linear-to-br from-purple-500 to-pink-500
-                                flex items-center justify-center text-white text-xs font-bold shrink-0">
+                                flex items-center justify-center text-white text-sm font-bold shrink-0">
                   {transaction.to.slice(2, 4).toUpperCase()}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-gray-400 text-xs">Recipient</p>
-                  <p className="text-white text-xs font-mono truncate">{transaction.to}</p>
+                  <p className="text-gray-400 text-sm">Recipient</p>
+                  <p className="text-white text-sm font-mono truncate">{transaction.to}</p>
                 </div>
                 <button
                   onClick={(e) => handleCopy(transaction.to, e)}
@@ -253,7 +253,7 @@ export const TransactionCard: React.FC<TransactionCardProps> = ({
               {/* Confirmation list */}
               <div className="space-y-2">
                 {transaction.confirmations.length === 0 ? (
-                  <p className="text-gray-600 text-xs">
+                  <p className="text-gray-600 text-sm">
                     No confirmations yet. Initiator must approve first.
                   </p>
                 ) : (
@@ -274,14 +274,14 @@ export const TransactionCard: React.FC<TransactionCardProps> = ({
                         />
                       </svg>
                       <div className="w-7 h-7 rounded-full bg-linear-to-br from-cyan-500 to-blue-500
-                                      flex items-center justify-center text-white text-xs font-bold shrink-0">
+                                      flex items-center justify-center text-white text-sm font-bold shrink-0">
                         {conf.owner.slice(2, 4).toUpperCase()}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-white text-xs font-mono truncate">{conf.owner}</p>
+                        <p className="text-white text-sm font-mono truncate">{conf.owner}</p>
                         {conf.owner.toLowerCase() ===
                           transaction.initiator.toLowerCase() && (
-                          <p className="text-gray-500 text-xs">initiator</p>
+                          <p className="text-gray-500 text-sm">initiator</p>
                         )}
                       </div>
                       <a

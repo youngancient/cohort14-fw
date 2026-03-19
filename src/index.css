@@ -4,9 +4,11 @@
   --color-primary: #7fffd4;
   --color-primary-hover: #6eeec3;
   --color-primary-active: #5dddb2;
-  e;
 }
 
+:root{
+    font-family: 'Cabinet Grotesk', 'Satoshi', sans-serif;
+}
 /* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 8px;

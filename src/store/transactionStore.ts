@@ -1,18 +1,53 @@
 // src/store/transactionStore.ts
-// A lightweight reactive store — no Redux/Zustand needed.
-// Components subscribe to changes; the service writes to this store.
-// When going live: replace store reads with on-chain event listeners / subgraph queries.
+// localStorage is the single source of truth for transactions.
+//
+// Flow:
+//   Boot      → load from localStorage into memory
+//   Create    → add() → save to localStorage → notify subscribers
+//   Approve   → update() → save to localStorage → notify subscribers
+//   Cancel    → update() → save to localStorage → notify subscribers
+//   Refresh   → loads from localStorage, exact state restored
+//   Clear     → wipes localStorage → empty state
+//
+// When going live: replace with on-chain event listeners / subgraph queries.
 
 import { type Transaction } from '../types/IMultisig';
 
 type Listener = () => void;
 
+const STORAGE_KEY = 'multisig_transactions_v1';
+
+// ---------------------------------------------------------------------------
+// localStorage helpers
+// ---------------------------------------------------------------------------
+const loadFromStorage = (): Map<string, Transaction> => {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return new Map();
+    const arr: Transaction[] = JSON.parse(raw);
+    if (!Array.isArray(arr)) return new Map();
+    return new Map(arr.map((tx) => [tx.id, tx]));
+  } catch {
+    return new Map();
+  }
+};
+
+const saveToStorage = (map: Map<string, Transaction>) => {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(Array.from(map.values())));
+  } catch {
+    // Quota exceeded or unavailable — fail silently
+  }
+};
+
+// ---------------------------------------------------------------------------
 class TransactionStore {
-  private transactions: Map<string, Transaction> = new Map();
+  // Hydrate from localStorage immediately on module load
+  private transactions: Map<string, Transaction> = loadFromStorage();
   private listeners: Set<Listener> = new Set();
 
   // ---------------------------------------------------------------------------
-  // Subscribe / unsubscribe
+  // Pub/sub
   // ---------------------------------------------------------------------------
   subscribe(fn: Listener): () => void {
     this.listeners.add(fn);
@@ -20,11 +55,12 @@ class TransactionStore {
   }
 
   private notify() {
+    saveToStorage(this.transactions);
     this.listeners.forEach((fn) => fn());
   }
 
   // ---------------------------------------------------------------------------
-  // Write
+  // Writes — every write persists to localStorage and notifies all subscribers
   // ---------------------------------------------------------------------------
   add(tx: Transaction) {
     this.transactions.set(tx.id, { ...tx });
@@ -38,8 +74,15 @@ class TransactionStore {
     this.notify();
   }
 
+  // Wipe everything — triggered by the Reset button on Home page
+  clearAll() {
+    this.transactions.clear();
+    localStorage.removeItem(STORAGE_KEY);
+    this.notify();
+  }
+
   // ---------------------------------------------------------------------------
-  // Read
+  // Reads
   // ---------------------------------------------------------------------------
   getAll(): Transaction[] {
     return Array.from(this.transactions.values()).sort(
@@ -59,9 +102,13 @@ class TransactionStore {
     return this.getByAccount(accountId).filter((tx) => tx.status === 'pending');
   }
 
-  // Seed existing mock transactions without notifying (called once on boot)
-  seed(txs: Transaction[]) {
-    txs.forEach((tx) => this.transactions.set(tx.id, { ...tx }));
+  getHistory(accountId: string): Transaction[] {
+    return this.getByAccount(accountId).filter((tx) => tx.status !== 'pending');
+  }
+
+  // How many transactions are currently in memory (for debugging)
+  size(): number {
+    return this.transactions.size;
   }
 }
 

@@ -165,7 +165,7 @@ class MultisigService {
       if (newConfirmations.length >= account.threshold) {
         const balance = parseFloat(account.balance);
         const amount = parseFloat(tx.value);
-        if (amount > balance) throw new Error('Insufficient balance');
+        // if (amount > balance) throw new Error('Insufficient balance');
 
         updated.status = 'executed';
         updated.executedAt = new Date().toISOString();
@@ -282,10 +282,10 @@ class MultisigService {
     nonces.set(account.id, 0);
   }
 
-  seedTransaction(tx: Transaction) {
-    // Seeds directly into the store (called once from mockData.seedMockData)
-    transactionStore.seed([tx]);
-  }
+  // seedTransaction(tx: Transaction) {
+  //   // Seeds directly into the store (called once from mockData.seedMockData)
+  //   transactionStore.seed([tx]);
+  // }
 }
 
 export const multisigService = new MultisigService();

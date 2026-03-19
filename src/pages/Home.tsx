@@ -1,5 +1,5 @@
 // src/pages/Home.tsx
-import React from 'react';
+import React, { useState } from 'react';
 import { useAccounts } from '../hooks/useAccounts';
 import { useTransactions } from '../hooks/useTransactions';
 import { useModal } from '../hooks/useModal';
@@ -8,9 +8,11 @@ import { StatsCard } from '../components/cards/StatsCard';
 import { TransactionCard } from '../components/cards/TransactionCard';
 
 export const Home: React.FC = () => {
-  const { accounts, selectedAccount, selectAccount } = useAccounts();
-  const { queuedTransactions } = useTransactions(selectedAccount?.id);
+  const { accounts, selectedAccount, selectAccountById } = useAccounts();
+  const { queuedTransactions, historyTransactions, pendingCount, clearAll } =
+    useTransactions(selectedAccount?.id);
   const { openNewTransaction } = useModal();
+  const [showResetConfirm, setShowResetConfirm] = useState(false);
 
   if (!selectedAccount) {
     return (
@@ -20,18 +22,23 @@ export const Home: React.FC = () => {
     );
   }
 
+  const handleReset = () => {
+    clearAll();
+    setShowResetConfirm(false);
+  };
+
   return (
     <Layout
       selectedAccount={selectedAccount}
       accounts={accounts}
-      onAccountSelect={(id) => selectAccount(accounts.find((a) => a.id === id)!)}
+      onAccountSelect={selectAccountById}
       onNewTransaction={openNewTransaction}
     >
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
         <StatsCard
           label="Balance"
-          value={`${selectedAccount.balance} TOKEN`}
+          value={`${selectedAccount.balance} MTK`}
           icon={
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
@@ -39,8 +46,6 @@ export const Home: React.FC = () => {
             </svg>
           }
         />
-
-        {/* Network badge in place of "Assets" — Account no longer has assetsCount */}
         <StatsCard
           label="Network"
           value={selectedAccount.network.toUpperCase()}
@@ -51,7 +56,6 @@ export const Home: React.FC = () => {
             </svg>
           }
         />
-
         <StatsCard
           label="Threshold"
           value={`${selectedAccount.threshold} / ${selectedAccount.owners.length}`}
@@ -62,8 +66,6 @@ export const Home: React.FC = () => {
             </svg>
           }
         />
-
-        {/* Fix: owners is Owner[] — use .length for the count */}
         <StatsCard
           label="Owners"
           value={selectedAccount.owners.length}
@@ -79,8 +81,8 @@ export const Home: React.FC = () => {
       {/* Token address bar */}
       <div className="bg-[#1a1a1a] border border-gray-800 rounded-xl px-4 py-3 mb-6
                       flex items-center gap-3">
-        <span className="text-gray-500 text-xs shrink-0">ERC-20 Token</span>
-        <span className="text-[#7FFFD4] text-xs font-mono truncate">
+        <span className="text-gray-500 text-sm shrink-0">ERC-20 Token Address</span>
+        <span className="text-[#7FFFD4] text-sm font-mono truncate flex-1">
           {selectedAccount.tokenAddress}
         </span>
         <a
@@ -88,7 +90,6 @@ export const Home: React.FC = () => {
           target="_blank"
           rel="noopener noreferrer"
           className="shrink-0 text-gray-600 hover:text-gray-400 transition-colors"
-          title="View on Etherscan"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
@@ -97,29 +98,40 @@ export const Home: React.FC = () => {
         </a>
       </div>
 
-      {/* Transaction Queue */}
-      <div className="bg-[#1a1a1a] border border-gray-800 rounded-xl p-6">
+      {/* Transaction Queue — live, from store */}
+      <div className="bg-[#1a1a1a] border border-gray-800 rounded-xl p-6 mb-6">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-white text-xl font-semibold">Transaction queue</h2>
-          {queuedTransactions.length > 0 && (
-            <span className="text-gray-400 text-sm">
-              {queuedTransactions.length} pending
-            </span>
-          )}
+          <div className="flex items-center gap-3">
+            <h2 className="text-white text-xl font-semibold">Transaction Queue</h2>
+            {/* Live badge — updates in real time */}
+            {pendingCount > 0 && (
+              <span className="text-sm font-bold px-2 py-0.5 rounded-full
+                               bg-yellow-400/20 text-yellow-400 border border-yellow-400/20">
+                {pendingCount} pending
+              </span>
+            )}
+          </div>
+          <a
+            href="/new-transaction"
+            className="text-[#7FFFD4] text-sm hover:underline transition-colors"
+          >
+            + New
+          </a>
         </div>
 
         <div className="space-y-3">
           {queuedTransactions.length === 0 ? (
-            <div className="text-center py-12">
-              <svg className="w-16 h-16 text-gray-700 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="text-center py-10">
+              <svg className="w-12 h-12 text-gray-700 mx-auto mb-3" fill="none"
+                   stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
                   d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
-              <p className="text-gray-500">No pending transactions</p>
+              <p className="text-gray-500 text-sm">No pending transactions</p>
               <a
                 href="/new-transaction"
-                className="mt-4 inline-block bg-[#7FFFD4] text-black text-sm font-semibold
-                           px-5 py-2 rounded-lg hover:bg-[#5eefc4] transition-colors"
+                className="mt-3 inline-block bg-[#7FFFD4] text-black text-sm font-semibold
+                           px-4 py-2 rounded-lg hover:bg-[#5eefc4] transition-colors"
               >
                 Create Transaction
               </a>
@@ -132,14 +144,70 @@ export const Home: React.FC = () => {
               {queuedTransactions.length > 3 && (
                 <a
                   href="/transactions"
-                  className="block w-full text-center text-[#7FFFD4] hover:underline text-sm py-2"
+                  className="block w-full text-center text-[#7FFFD4] hover:underline
+                             text-sm py-2"
                 >
-                  View all {queuedTransactions.length} transactions
+                  View all {queuedTransactions.length} pending transactions
                 </a>
               )}
             </>
           )}
         </div>
+      </div>
+
+      {/* Recent History — last 3 executed/cancelled */}
+      {historyTransactions.length > 0 && (
+        <div className="bg-[#1a1a1a] border border-gray-800 rounded-xl p-6 mb-6">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-white text-xl font-semibold">Recent History</h2>
+            <a href="/transactions" className="text-[#7FFFD4] text-sm hover:underline">
+              View all
+            </a>
+          </div>
+          <div className="space-y-3">
+            {historyTransactions.slice(0, 3).map((tx) => (
+              <TransactionCard key={tx.id} transaction={tx} />
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Dev utility — reset simulation data */}
+      <div className="border border-gray-800 rounded-xl p-4 flex items-center
+                      justify-between gap-4">
+        <div>
+          <p className="text-gray-500 text-sm font-medium">Dev Utility</p>
+          <p className="text-gray-700 text-sm mt-0.5">
+            Clear all cached transaction data and reset to mock defaults
+          </p>
+        </div>
+        {showResetConfirm ? (
+          <div className="flex gap-2 shrink-0">
+            <button
+              onClick={() => setShowResetConfirm(false)}
+              className="px-3 py-1.5 border border-gray-700 text-gray-400 rounded-lg
+                         hover:border-gray-500 transition-colors text-sm"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleReset}
+              className="px-3 py-1.5 bg-red-500/80 text-white rounded-lg
+                         hover:bg-red-500 transition-colors text-sm font-medium"
+            >
+              Confirm Reset
+            </button>
+          </div>
+        ) : (
+          <button
+            onClick={() => setShowResetConfirm(true)}
+            className="shrink-0 px-3 py-1.5 border border-gray-800 text-gray-600
+                       rounded-lg hover:border-red-500/30 hover:text-red-400
+                       transition-colors text-sm"
+          >
+            Reset Data
+          </button>
+        )}
       </div>
     </Layout>
   );

@@ -46,7 +46,7 @@ export const AccountCard: React.FC<AccountCardProps> = ({ account, onClick }) =>
         </div>
       </div>
       <div className="flex items-center justify-between">
-        <span className="text-gray-500 text-xs uppercase">{account.network}</span>
+        <span className="text-gray-500 text-sm uppercase">{account.network}</span>
       </div>
     </div>
   );

@@ -1,34 +1,36 @@
 // src/hooks/useTransactions.ts
-// Subscribes to transactionStore — re-renders automatically whenever
-// any write function (create/approve/cancel) mutates the store.
+// Subscribes to transactionStore — re-renders on every create/approve/cancel.
+// Data is already persisted by the store; this hook just reads + subscribes.
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { transactionStore } from '../store/transactionStore';
 import { type Transaction } from '../types/IMultisig';
 
 interface UseTransactionsReturn {
-  transactions: Transaction[];
-  queuedTransactions: Transaction[];
-  historyTransactions: Transaction[];
+  transactions: Transaction[];            // all txns for account (sorted newest first)
+  queuedTransactions: Transaction[];      // pending only  → Transaction queue
+  historyTransactions: Transaction[];     // executed + cancelled → History tab
+  pendingCount: number;                   // for badge counters in nav / header
   isLoading: boolean;
+  clearAll: () => void;                   // dev utility — resets storage
 }
 
 export const useTransactions = (accountId: string | undefined): UseTransactionsReturn => {
-  const [transactions, setTransactions] = useState<Transaction[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [transactions, setTransactions] = useState<Transaction[]>(() =>
+    accountId ? transactionStore.getByAccount(accountId) : []
+  );
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (!accountId) {
       setTransactions([]);
-      setIsLoading(false);
       return;
     }
 
-    // Initial read
+    // Sync immediately on accountId change
     setTransactions(transactionStore.getByAccount(accountId));
-    setIsLoading(false);
 
-    // Subscribe — called every time the store mutates
+    // Subscribe to store mutations (create / approve / cancel all call notify())
     const unsubscribe = transactionStore.subscribe(() => {
       setTransactions(transactionStore.getByAccount(accountId));
     });
@@ -36,8 +38,19 @@ export const useTransactions = (accountId: string | undefined): UseTransactionsR
     return unsubscribe;
   }, [accountId]);
 
+  const clearAll = useCallback(() => {
+    transactionStore.clearAll();
+  }, []);
+
   const queuedTransactions = transactions.filter((tx) => tx.status === 'pending');
   const historyTransactions = transactions.filter((tx) => tx.status !== 'pending');
 
-  return { transactions, queuedTransactions, historyTransactions, isLoading };
+  return {
+    transactions,
+    queuedTransactions,
+    historyTransactions,
+    pendingCount: queuedTransactions.length,
+    isLoading,
+    clearAll,
+  };
 };

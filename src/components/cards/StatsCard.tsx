@@ -14,7 +14,7 @@ export const StatsCard: React.FC<StatsCardProps> = ({ label, value, icon }) => {
         <span className="text-gray-400 text-sm uppercase tracking-wide">{label}</span>
         {icon && <div className="text-gray-600">{icon}</div>}
       </div>
-      <p className="text-white text-3xl font-bold">{value}</p>
+      <p className="text-white text-2xl truncate font-bold">{value}</p>
     </div>
   );
 };
