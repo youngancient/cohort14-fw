@@ -5,6 +5,13 @@ interface CreateTokenModalProps {
   onClose: () => void;
 }
 
+interface TokenData {
+  tokenName: string;
+  decimals: number;
+  symbol: string;
+  initialSupply: number;
+}
+
 export default function CreateTokenModal({
   isOpen,
   onClose,
@@ -17,6 +24,28 @@ export default function CreateTokenModal({
   });
 
   if (!isOpen) return null;
+
+    const [errors, setErrors] = useState<Partial<TokenData>>({});
+
+  const validateForm = (): boolean => {
+    const newErrors: Partial<Record<string, string>> = {};
+
+    if (!form.tokenName.trim()) {
+      newErrors.tokenName = 'Token name is required';
+    }
+    if (!form.symbol.trim()) {
+      newErrors.symbol = 'Symbol is required';
+    }
+    if (Number(form.decimals) < 0 || Number(form.decimals) > 18) {
+      newErrors.decimals = 'Decimals must be between 0 and 18';
+    }
+    if (Number(form.initialSupply) <= 0) {
+      newErrors.initialSupply = 'Initial supply must be greater than 0';
+    }
+
+    setErrors(newErrors as Partial<TokenData>);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -36,7 +65,6 @@ export default function CreateTokenModal({
       style={{ background: "rgba(10,15,30,0.75)", backdropFilter: "blur(6px)" }}
       onClick={onClose}
     >
-      {/* Modal Card */}
       <div
         className="w-480px rounded-2xl overflow-hidden"
         style={{
@@ -47,7 +75,6 @@ export default function CreateTokenModal({
         onClick={(e: React.MouseEvent<HTMLDivElement>) => e.stopPropagation()}
       >
         <div className="p-8">
-          {/* close button */}
           <div className="flex items-center justify-between mb-5 cursor-pointer">
             <span
               className="text-[10px] font-bold tracking-widest uppercase px-3 py-1 rounded-full"
@@ -74,7 +101,6 @@ export default function CreateTokenModal({
             </button>
           </div>
 
-          {/* Title */}
           <h2 className="text-white text-[1.65rem] font-bold mb-1 tracking-tight">
             Create Token
           </h2>
@@ -82,7 +108,6 @@ export default function CreateTokenModal({
             Configure your ERC-20 asset parameters.
           </p>
 
-          {/* Form fields */}
           <div className="grid grid-cols-2 gap-4 mb-6">
             <div className="flex flex-col gap-2">
               <label className="text-[10px] font-semibold tracking-widest uppercase text-[#8a94a6]">
@@ -102,6 +127,10 @@ export default function CreateTokenModal({
                   border: "1px solid rgba(255,255,255,0.07)",
                 }}
               />
+
+              {errors.tokenName && (
+                <p className="mt-1 text-xs text-red-500">{errors.tokenName}</p>
+              )}
             </div>
 
             <div className="flex flex-col gap-2">
@@ -122,6 +151,10 @@ export default function CreateTokenModal({
                   border: "1px solid rgba(255,255,255,0.07)",
                 }}
               />
+
+              {errors.symbol && (
+                <p className="mt-1 text-xs text-red-500">{errors.symbol}</p>
+              )}
             </div>
 
             <div className="flex flex-col gap-2">
@@ -141,6 +174,10 @@ export default function CreateTokenModal({
                   border: "1px solid rgba(255,255,255,0.07)",
                 }}
               />
+
+              {errors.symbol && (
+                <p className="mt-1 text-xs text-red-500">{errors.symbol}</p>
+              )}
             </div>
 
             <div className="flex flex-col gap-2">
@@ -160,16 +197,20 @@ export default function CreateTokenModal({
                   border: "1px solid rgba(255,255,255,0.07)",
                 }}
               />
+
+              {errors.initialSupply && (
+                <p className="mt-1 text-xs text-red-500">{errors.initialSupply}</p>
+              )}
             </div>
           </div>
 
-          {/* Deploy button */}
           <button
             className="w-full py-4 rounded-xl text-[#0a0f1e] font-bold text-sm tracking-wide hover:brightness-110 transition-all cursor-pointer"
             style={{
               background: "linear-gradient(90deg, #00e5ff, #00bcd4)",
               boxShadow: "0 4px 24px rgba(0,229,255,0.25)",
             }}
+            onClick={onClose}
           >
             Deploy Token
           </button>
