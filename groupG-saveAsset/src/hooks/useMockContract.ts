@@ -6,7 +6,7 @@ import { useAppContext } from "./useAppContext"
 const DELAY_MS = 2500
 
 export const useMockContract = () => {
-	const { ethBalance, setEthBalance, tokenBalance, setTokenBalance, activity, setActivity, setLoading } =
+	const { walletAddress, ethBalance, setEthBalance, tokenBalance, setTokenBalance, activity, setActivity, setLoading } =
 		useAppContext()
 
 	const generateId = () => Math.random().toString(36).substring(2, 9)
@@ -40,6 +40,11 @@ export const useMockContract = () => {
 	) => {
 		if (!amountStr || parseFloat(amountStr) <= 0 || isNaN(parseFloat(amountStr))) {
 			toast.error("Please enter a valid amount")
+			return
+		}
+
+		if (!walletAddress) {
+			toast.error("Please connect your wallet first")
 			return
 		}
 
@@ -96,6 +101,10 @@ export const useMockContract = () => {
 	}
 
 	const withdrawEth = async (amount: string) => {
+		if (parseFloat(amount) > parseFloat(ethBalance)) {
+			toast.error("Insufficient ETH balance")
+			return
+		}
 		await simulateTransaction("Withdraw ETH", `${amount} ETH`, false, () => {
 			setEthBalance((parseFloat(ethBalance) - parseFloat(amount)).toFixed(2))
 		})
@@ -104,6 +113,10 @@ export const useMockContract = () => {
 	const sendToken = async (recipient: string, amount: string) => {
 		if (!recipient) {
 			toast.error("Recipient address is required")
+			return
+		}
+		if (parseFloat(amount) > parseFloat(tokenBalance)) {
+			toast.error("Insufficient RBNNT balance")
 			return
 		}
 		await simulateTransaction("Send Token", `${amount} RBNNT`, false, () => {
@@ -118,12 +131,20 @@ export const useMockContract = () => {
 	}
 
 	const withdrawToken = async (amount: string) => {
+		if (parseFloat(amount) > parseFloat(tokenBalance)) {
+			toast.error("Insufficient RBNNT balance")
+			return
+		}
 		await simulateTransaction("Withdraw ERC20", `${amount} RBNNT`, false, () => {
 			setTokenBalance((parseFloat(tokenBalance) - parseFloat(amount)).toFixed(2))
 		})
 	}
 
 	const burnToken = async (amount: string) => {
+		if (parseFloat(amount) > parseFloat(tokenBalance)) {
+			toast.error("Insufficient RBNNT balance")
+			return
+		}
 		await simulateTransaction("Burn Token", `${amount} RBNNT`, false, () => {
 			setTokenBalance((parseFloat(tokenBalance) - parseFloat(amount)).toFixed(2))
 		})
