@@ -1,7 +1,7 @@
 // import { useState } from 'react'
 // import SplashPage from './components/SplashPage'
-import ERC20Page from './components/ERC20page'
-import './App.css'
+import TokenInteractionPage from "./pages/TokenInteractionPage";
+import ERC20Page from './components/ERC20page';
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 
@@ -19,15 +19,18 @@ export default function App() {
       )} 
        {page === 'erc20' && ( */}
          
-        <ERC20Page />
+        {/* <ERC20Page /> */}
          
        {/* )} */}
       
     </div>
     <Footer/>
+      <TokenInteractionPage tokenDetail={{
+        name: "Group B Token",
+        symbol: "GRP-B",
+        decimals: 18,
+        totalSupply: "100000000"
+      }}/>
     </>
-  )
-}
-
-
-
+  );
+};

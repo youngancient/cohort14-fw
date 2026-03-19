@@ -29,6 +29,21 @@ export default function Navbar() {
           </span>
         </div>
 
+         <nav className="tf-navbar-links" aria-label="Main navigation">
+        <button type="button" className="tf-nav-link tf-nav-link--active">
+          Factory
+        </button>
+        <button type="button" className="tf-nav-link">
+          Dashboard
+        </button>
+        <button type="button" className="tf-nav-link">
+          Docs
+        </button>
+        <button type="button" className="tf-nav-link">
+          Audit
+        </button>
+      </nav>
+
         {/* Right side */}
         <div className="flex items-center gap-3">
           {/* Network badge */}
