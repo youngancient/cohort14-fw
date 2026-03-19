@@ -1,7 +1,7 @@
 import { useMemo, useState, type FormEvent } from 'react'
 import { mockStaff, mockStudents } from '../data/mockData'
 
-const dates = ['Oct 24, 2023', 'Oct 23, 2023', 'Oct 22, 2023', 'Oct 21, 2023', 'Oct 20, 2023']
+const dates = ['Oct 24, 2025', 'Oct 23, 2026', 'Oct 22, 2025', 'Oct 21, 2026', 'Oct 20, 2025']
 
 const getInitials = (name: string) =>
 	name
@@ -165,7 +165,7 @@ function AcademicLedger() {
 			<div className="max-w-[720px]">
 				<h2 className="text-[36px] font-semibold text-[#161c25]">Academic Ledger</h2>
 				<p className="mt-3 text-[14px] leading-7 text-[#5b6370]">
-					Financial oversight and transaction records for the 2023/24 Academic Session.
+					Financial oversight and transaction records for the 2025/26 Academic Session.
 				</p>
 			</div>
 
