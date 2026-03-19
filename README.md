@@ -1,73 +1,159 @@
-# React + TypeScript + Vite
+# ERC20 Token Factory Platform
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A web platform where anyone can deploy their own ERC20 token through a Factory Contract, test all its functions, and receive the deployed contract address — all without writing any code.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Tech Stack
 
-## React Compiler
+- React + Vite
+- Tailwind CSS
+- React Router
+- Solidity (^0.8.3)
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+---
 
-## Expanding the ESLint configuration
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Getting Started (Local Setup)
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+### 1. Clone the repository
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+git clone https://github.com/gharneeyart/GroupB-Frontend.git
+cd groupb-frontend
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### 2. Install dependencies
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+```bash
+npm install
+```
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### 3. Set up environment variables
+
+Copy the example env file and fill in your values:
+
+```bash
+cp .env.example .env
+```
+
+Open `.env` and update the following:
+
+```env
+VITE_FACTORY_CONTRACT_ADDRESS=0xYourFactoryAddressHere
+VITE_RPC_URL=https://your-rpc-url-here
+VITE_CHAIN_ID=11155111
+```
+
+### 4. Start the development server
+
+```bash
+npm run dev
+```
+
+The app will be running at `http://localhost:5173`
+
+
+### 5.  Create a branch
+
+Always create a new branch for your work. Never commit directly to `main`.
+
+Use this naming convention for your branch:
+
+```bash
+# For a new feature
+git checkout -b feat/your-feature-name
+
+# For a bug fix
+git checkout -b fix/what-you-are-fixing
+
+# For documentation
+git checkout -b docs/what-you-are-documenting
+```
+
+Examples:
+
+```bash
+git checkout -b feat/token-registry-table
+git checkout -b fix/modal-close-on-backdrop
+git checkout -b docs/update-setup-steps
+```
+
+### 6. Make your changes
+
+Write your code, then stage and commit your changes:
+
+```bash
+git add .
+git commit -m "feat: add token registry table with deploy date"
+```
+
+Follow this commit message format:
+
+| Prefix | When to use |
+|---|---|
+| `feat:` | Adding a new feature |
+| `fix:` | Fixing a bug |
+| `docs:` | Documentation changes only |
+| `style:` | Formatting, no logic change |
+| `refactor:` | Code restructure, no feature change |
+| `chore:` | Dependency updates, config changes |
+
+### 7. Sync with main before pushing
+
+Before pushing, make sure your branch is up to date with the latest `main`:
+
+```bash
+git pull origin main
+```
+
+Resolve any conflicts if they come up
+
+### 8. Push your branch
+
+```bash
+git push origin feat/your-feature-name
+```
+
+### 9. Open a Pull Request
+
+1. Go to the original repository on GitHub
+2. Click **"Compare & pull request"**
+3. Set the base branch to `main`
+4. Fill in the PR template:
+   - **What does this PR do?** — brief description
+   - **How to test it?** — steps to reproduce or verify
+   - **Screenshots** — if UI changes are involved
+5. Request a review from a maintainer
+6. Wait for approval before merging
+
+---
+
+## Branch Rules
+
+- `main` — production-ready code only, protected
+- `feat/*` — new features
+- `fix/*` — bug fixes
+- `docs/*` — documentation updates
+
+Do not push directly to `main`. All changes go through a Pull Request.
+
+---
+
+## Project Structure
+
+```
+erc20-token-factory/
+├── src/
+│   ├── components/       # Reusable UI components
+│   ├── pages/            # Route-level pages
+│   ├── hooks/            # Custom React hooks
+│   ├── utils/            # Helper functions and validation
+│   ├── constants/        # ABI, addresses, mock data
+│   └── main.jsx          # App entry point
+├── contracts/            # Solidity source files
+├── public/
+├── .env.example
+├── index.html
+└── README.md
 ```
