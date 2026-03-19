@@ -1,5 +1,5 @@
 import { useState } from "react";
-import CreateTokenModal from "./createTokenModal";
+import CreateTokenModal from "./CreateTokenModal";
 
 export default function Navbar() {
   const [isModalOpen, setIsModalOpen] = useState(false);
