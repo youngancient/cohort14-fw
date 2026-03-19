@@ -16,15 +16,15 @@ type FilterType = "all" | "pending" | "successful" | "canceled";
 const FILTERS: { label: string; value: FilterType }[] = [
   { label: "All", value: "all" },
   { label: "Pending", value: "pending" },
-  { label: "Approved by Me", value: "approved" },
+  // { label: "Approved by Me", value: "approved" },
   { label: "Executed", value: "successful" },
   { label: "Canceled", value: "canceled" },
 ];
 
-const FILTER_MAP: Record<FilterType, ((t: Transaction, account: string | null) => boolean) | TxnStatus | null> = {
+const FILTER_MAP = {
   all: null,
   pending: TxnStatus.pending,
-  approved: (t, account) => {
+  approved: (t: Transaction, account: string | null) => {
     if (!account) return false;
     if (t.status !== TxnStatus.approved) return false;
     // Case-insensitive address comparison
