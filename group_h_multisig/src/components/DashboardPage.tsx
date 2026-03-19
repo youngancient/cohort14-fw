@@ -9,11 +9,11 @@
  * - Recent activity
  */
 
-import { useVaultBalance } from '@/hooks/useVaultBalance'
+import { useVaultBalance } from '../hooks/useVaultBalance'
 import { useEffect } from 'react'
-import { Card } from '@/components/ui/card'
+import { Card } from './ui/card'
 import { ArrowUpRight, ArrowDownLeft, TrendingUp, Shield } from 'lucide-react'
-import { mockActivityItems } from '@/lib/mockData'
+import { mockActivityItems } from '../lib/mockData'
 
 /**
  * Dashboard page component
