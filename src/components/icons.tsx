@@ -9,6 +9,8 @@ import dropIcon from './../assets/drop.svg'
 import studentIcon from './../assets/student.svg'
 import staffIcon from './../assets/staff.svg'
 import approveIcon from './../assets/approve.svg'
+import walletIcon from './../assets/wallet.svg'
+
 
 export {
     overviewIcon,
@@ -22,4 +24,5 @@ export {
 	staffIcon,
 	studentIcon,
 	usersIcon,
+	walletIcon,
 }
