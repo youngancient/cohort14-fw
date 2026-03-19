@@ -213,7 +213,7 @@ export function useVaultSettings(): UseVaultSettingsReturn {
    * Enable or disable a security policy
    * Requires smart contract call: vault.setSecurityPolicy(policyId, enabled)
    */
-  const updateSecurityPolicy = useCallback(async (policyId: string, enabled: boolean) => {
+  const updateSecurityPolicy = useCallback(async (_policyId: string, _enabled: boolean) => {
     try {
       setError(null);
 

@@ -1,7 +1,7 @@
 import { Routes, Route, Navigate } from 'react-router-dom'
 import AppLayout from './components/AppLayout'
 import DashboardPage from './components/DashboardPage'
-import QueuePage from './components/QueuePage'
+import QueuePage from './components/Queue'
 import CreatePage from './components/CreatePage'
 import SettingsPage from './components/SettingsPage'
 

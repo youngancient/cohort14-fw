@@ -6,7 +6,6 @@ import type {
   Transaction,
   ActivityItem,
   VaultHealth,
-  Signer,
 } from './types';
 
 /** Mock vault configuration */
