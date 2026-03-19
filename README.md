@@ -2,6 +2,8 @@
 
 A web platform where anyone can deploy their own ERC20 token through a Factory Contract, test all its functions, and receive the deployed contract address — all without writing any code.
 
+### Contract Address: 0x6B0a87D1d8ca50891FA8753900Bd55C56E7a61c6
+
 ---
 
 ## Tech Stack
