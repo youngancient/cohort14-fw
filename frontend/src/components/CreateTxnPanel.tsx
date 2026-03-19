@@ -3,24 +3,64 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { X, Plus } from "lucide-react";
+import { X, Plus, AlertCircle } from "lucide-react";
 import { MOCK_TOKEN_SYMBOL } from "@/lib/mock-data";
+import { ConfirmTxnModal } from "./ConfirmTxnModal";
 
 interface CreateTxnPanelProps {
   open: boolean;
   onClose: () => void;
+  onCreateTransaction: (recipient: string, amount: number) => void;
 }
 
-export function CreateTxnPanel({ open, onClose }: CreateTxnPanelProps) {
+// Validate Ethereum address format
+function isValidAddress(address: string): boolean {
+  return /^0x[a-fA-F0-9]{40}$/.test(address);
+}
+
+export function CreateTxnPanel({ open, onClose, onCreateTransaction }: CreateTxnPanelProps) {
   const [recipient, setRecipient] = useState("");
   const [amount, setAmount] = useState("");
+  const [errors, setErrors] = useState<{ recipient?: string; amount?: string }>({});
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+
+  const validateForm = (): boolean => {
+    const newErrors: { recipient?: string; amount?: string } = {};
+
+    // Validate recipient address
+    if (!recipient.trim()) {
+      newErrors.recipient = "Recipient address is required";
+    } else if (!isValidAddress(recipient)) {
+      newErrors.recipient = "Invalid Ethereum address format";
+    }
+
+    // Validate amount
+    if (!amount.trim()) {
+      newErrors.amount = "Amount is required";
+    } else if (parseFloat(amount) <= 0) {
+      newErrors.amount = "Amount must be greater than 0";
+    } else if (isNaN(parseFloat(amount))) {
+      newErrors.amount = "Amount must be a valid number";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Mock: just close
+    if (validateForm()) {
+      setShowConfirmModal(true);
+    }
+  };
+
+  const handleConfirm = () => {
+    onCreateTransaction(recipient, parseFloat(amount));
+    setShowConfirmModal(false);
     onClose();
     setRecipient("");
     setAmount("");
+    setErrors({});
   };
 
   return (
@@ -54,9 +94,20 @@ export function CreateTxnPanel({ open, onClose }: CreateTxnPanelProps) {
                 <Input
                   placeholder="0x..."
                   value={recipient}
-                  onChange={(e) => setRecipient(e.target.value)}
-                  className="font-mono bg-surface border-border focus:border-primary"
+                  onChange={(e) => {
+                    setRecipient(e.target.value);
+                    if (errors.recipient) setErrors({ ...errors, recipient: undefined });
+                  }}
+                  className={`font-mono bg-surface focus:border-primary ${
+                    errors.recipient ? "border-destructive" : "border-border"
+                  }`}
                 />
+                {errors.recipient && (
+                  <div className="flex items-center gap-2 text-xs text-destructive">
+                    <AlertCircle className="h-3 w-3" />
+                    <span>{errors.recipient}</span>
+                  </div>
+                )}
               </div>
 
               <div className="space-y-2">
@@ -65,9 +116,20 @@ export function CreateTxnPanel({ open, onClose }: CreateTxnPanelProps) {
                   type="number"
                   placeholder="0.00"
                   value={amount}
-                  onChange={(e) => setAmount(e.target.value)}
-                  className="font-mono text-lg bg-surface border-border focus:border-primary"
+                  onChange={(e) => {
+                    setAmount(e.target.value);
+                    if (errors.amount) setErrors({ ...errors, amount: undefined });
+                  }}
+                  className={`font-mono text-lg bg-surface focus:border-primary ${
+                    errors.amount ? "border-destructive" : "border-border"
+                  }`}
                 />
+                {errors.amount && (
+                  <div className="flex items-center gap-2 text-xs text-destructive">
+                    <AlertCircle className="h-3 w-3" />
+                    <span>{errors.amount}</span>
+                  </div>
+                )}
               </div>
 
               <div className="mt-auto">
@@ -77,6 +139,14 @@ export function CreateTxnPanel({ open, onClose }: CreateTxnPanelProps) {
                 </Button>
               </div>
             </form>
+
+            <ConfirmTxnModal
+              open={showConfirmModal}
+              onOpenChange={setShowConfirmModal}
+              onConfirm={handleConfirm}
+              recipient={recipient}
+              amount={amount ? parseFloat(amount) : 0}
+            />
           </motion.div>
         </>
       )}

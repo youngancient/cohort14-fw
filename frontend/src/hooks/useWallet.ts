@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { ethers } from "ethers";
+import { useToast } from "@/hooks/use-toast";
 
 declare global {
   interface Window {
@@ -9,11 +10,17 @@ declare global {
 
 export function useWallet() {
   const [account, setAccount] = useState<string | null>(null);
+   const { toast } = useToast();
 
   // connect wallet
   const connectWallet = async () => {
     if (!window.ethereum) {
-      alert("MetaMask is not installed");
+    //   toast("MetaMask is not installed");
+      toast({
+        title: "MetaMask is not installed",
+        description: "Please Install Metamask",
+        variant: "destructive",
+      });
       return;
     }
 
