@@ -53,7 +53,7 @@ export function useTransactionQueue(): UseTransactionQueueReturn {
    * Requires smart contract call: vault.approveTransaction(txId)
    */
   const approveTransaction = useCallback(
-    async (transactionId: string, comment?: string) => {
+    async (transactionId: string) => {
       try {
         setError(null);
 
@@ -94,7 +94,7 @@ export function useTransactionQueue(): UseTransactionQueueReturn {
    * Requires smart contract call: vault.rejectTransaction(txId)
    */
   const rejectTransaction = useCallback(
-    async (transactionId: string, reason?: string) => {
+    async (transactionId: string) => {
       try {
         setError(null);
 

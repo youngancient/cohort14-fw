@@ -13,7 +13,7 @@ import { useTransactionQueue } from '../hooks/useTransactionQueue'
 import { useEffect, useState } from 'react'
 import { Card } from '../components/ui/card'
 import { Button } from '../components/ui/button'
-import { CheckCircle2, XCircle, Clock, ChevronRight } from 'lucide-react'
+import { CheckCircle2, XCircle, Clock} from 'lucide-react'
 import { mockActivityItems } from '../lib/mockData'
 
 /**
