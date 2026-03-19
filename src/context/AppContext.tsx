@@ -4,6 +4,7 @@ import {
   useState,
   useCallback,
   useEffect,
+  useMemo,
   type ReactNode,
 } from "react";
 import type {
@@ -59,7 +60,7 @@ export const DEFAULT_FALLBACK = {
   apy: "8.0%",
 };
 
-/** Returns the cover URL for a property — user-uploaded if available, else fallback */
+/** Pure function — no hooks, safe to call anywhere */
 export function getPropertyImage(
   id: number,
   userImages?: Record<number, PropertyImages>
@@ -156,7 +157,7 @@ const MOCK_PROPERTIES: Property[] = [
   },
 ];
 
-// ── LocalStorage key ─────────────────────────────────────────────────────────
+// ── LocalStorage helpers ─────────────────────────────────────────────────────
 const LS_KEY = "ocean_property_images";
 
 function loadStoredImages(): Record<number, PropertyImages> {
@@ -168,7 +169,7 @@ function loadStoredImages(): Record<number, PropertyImages> {
   }
 }
 
-function saveStoredImages(data: Record<number, PropertyImages>) {
+function persistImages(data: Record<number, PropertyImages>) {
   try {
     localStorage.setItem(LS_KEY, JSON.stringify(data));
   } catch {}
@@ -176,18 +177,18 @@ function saveStoredImages(data: Record<number, PropertyImages>) {
 
 // ── Provider ─────────────────────────────────────────────────────────────────
 export function AppProvider({ children }: { children: ReactNode }) {
-  // Wallet (wagmi wires into here)
+  // ── Wallet state ─────────────────────────────────────────────────────────
   const [isConnected, setIsConnected] = useState(false);
   const [address, setAddress] = useState<string | undefined>(undefined);
   const [isOwner, setIsOwner] = useState(false);
 
-  // --- DEMO toggle so you can test connected/disconnected state in UI ---
-  // Remove this block and replace with real wagmi hooks when integrating
+  // Demo toggle: Alt+W simulates wallet connect/disconnect
+  // Replace this entire useEffect with real wagmi hooks when integrating
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if (e.altKey && e.key === "w") {
-        setIsConnected((v) => {
-          const next = !v;
+        setIsConnected((prev) => {
+          const next = !prev;
           setAddress(
             next ? "0x71Cf5A6E5B0B2F97f0b4CDb38Ced48A49B61a49B" : undefined
           );
@@ -200,12 +201,13 @@ export function AppProvider({ children }: { children: ReactNode }) {
     return () => window.removeEventListener("keydown", handler);
   }, []);
 
+  // ── App state ─────────────────────────────────────────────────────────────
   const [properties, setProperties] = useState<Property[]>(MOCK_PROPERTIES);
-  const [isLoadingProperties, setIsLoadingProperties] = useState(false);
+  console.log(setProperties(MOCK_PROPERTIES))
+  const [isLoadingProperties, setIsLoading] = useState(false);
   const [selectedPropertyId, setSelectedPropertyId] = useState<number | null>(
     null
   );
-  console.log(setProperties(MOCK_PROPERTIES));
   const [activeModal, setActiveModal] = useState<ModalType>(null);
   const [toasts, setToasts] = useState<Toast[]>([]);
   const [filterType, setFilterType] = useState("");
@@ -216,8 +218,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [marketplaceView, setMarketplaceView] = useState<ViewMode>("grid");
   const [dashboardView, setDashboardView] = useState<ViewMode>("grid");
 
-  const listedProperties = properties.filter((p) => p.isListed && !p.isSold);
-
+  // ── Stable callbacks ──────────────────────────────────────────────────────
   const openModal = useCallback((m: ModalType) => setActiveModal(m), []);
   const closeModal = useCallback(() => setActiveModal(null), []);
 
@@ -237,53 +238,84 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const savePropertyImages = useCallback((id: number, data: PropertyImages) => {
     setPropertyImages((prev) => {
       const next = { ...prev, [id]: data };
-      saveStoredImages(next);
+      persistImages(next);
       return next;
     });
   }, []);
 
   const getPropertyImageData = useCallback(
-    (id: number): PropertyImages | null => {
-      return propertyImages[id] ?? null;
-    },
+    (id: number): PropertyImages | null => propertyImages[id] ?? null,
     [propertyImages]
   );
 
   const refreshProperties = useCallback(() => {
-    setIsLoadingProperties(true);
-    setTimeout(() => setIsLoadingProperties(false), 800);
+    setIsLoading(true);
+    setTimeout(() => setIsLoading(false), 800);
   }, []);
 
-  const value: AppContextType = {
-    isConnected,
-    address,
-    isOwner,
-    properties,
-    listedProperties,
-    isLoadingProperties,
-    selectedPropertyId,
-    setSelectedPropertyId,
-    activeModal,
-    openModal,
-    closeModal,
-    toasts,
-    addToast,
-    removeToast,
-    filterType,
-    filterCategory,
-    filterPrice,
-    setFilterType,
-    setFilterCategory,
-    setFilterPrice,
-    propertyImages,
-    savePropertyImages,
-    getPropertyImageData,
-    marketplaceView,
-    setMarketplaceView,
-    dashboardView,
-    setDashboardView,
-    refreshProperties,
-  };
+  // ── Derived state ─────────────────────────────────────────────────────────
+  const listedProperties = useMemo(
+    () => properties.filter((p) => p.isListed && !p.isSold),
+    [properties]
+  );
+
+  // ── Memoised context value — prevents all consumers re-rendering on every tick
+  const value = useMemo<AppContextType>(
+    () => ({
+      isConnected,
+      address,
+      isOwner,
+      properties,
+      listedProperties,
+      isLoadingProperties,
+      selectedPropertyId,
+      setSelectedPropertyId,
+      activeModal,
+      openModal,
+      closeModal,
+      toasts,
+      addToast,
+      removeToast,
+      filterType,
+      filterCategory,
+      filterPrice,
+      setFilterType,
+      setFilterCategory,
+      setFilterPrice,
+      propertyImages,
+      savePropertyImages,
+      getPropertyImageData,
+      marketplaceView,
+      setMarketplaceView,
+      dashboardView,
+      setDashboardView,
+      refreshProperties,
+    }),
+    [
+      isConnected,
+      address,
+      isOwner,
+      properties,
+      listedProperties,
+      isLoadingProperties,
+      selectedPropertyId,
+      activeModal,
+      openModal,
+      closeModal,
+      toasts,
+      addToast,
+      removeToast,
+      filterType,
+      filterCategory,
+      filterPrice,
+      propertyImages,
+      savePropertyImages,
+      getPropertyImageData,
+      marketplaceView,
+      dashboardView,
+      refreshProperties,
+    ]
+  );
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
 }

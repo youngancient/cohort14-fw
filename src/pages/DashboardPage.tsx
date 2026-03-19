@@ -165,7 +165,7 @@ export function DashboardPage() {
             <h2 className="text-3xl md:text-4xl font-extrabold font-headline text-on-surface tracking-tight">
               Property Management
             </h2>
-            <p className="text-on-surface-variant font-label text-sm mt-1 font-mono">
+            <p className="text-on-surface-variant font-label text-sm mt-1">
               {address ? `${address.slice(0, 10)}...${address.slice(-6)}` : ""}
             </p>
           </div>

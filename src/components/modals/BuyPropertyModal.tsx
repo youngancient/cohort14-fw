@@ -13,16 +13,17 @@ export function BuyPropertyModal() {
     refreshProperties,
     selectedPropertyId,
     properties,
+    propertyImages,
   } = useApp();
   const { buyerApprove, isLoading: isApproving } = useBuyerApprove();
   const { buyProperty, isLoading: isBuying } = useBuyProperty();
-
   const [step, setStep] = useState<1 | 2>(1);
 
   const property = properties.find((p) => p.id === selectedPropertyId);
   if (!property) return null;
 
-  const { url, location } = getPropertyImage(property.id);
+  // Pass propertyImages so we use the user-uploaded cover if available
+  const { url, location } = getPropertyImage(property.id, propertyImages);
 
   const handleApprove = async () => {
     await buyerApprove(property.price);
@@ -48,7 +49,7 @@ export function BuyPropertyModal() {
   return (
     <Modal title="Purchase Portal" size="sm">
       <div className="space-y-6">
-        {/* Property preview */}
+        {/* Preview */}
         <div className="relative h-40 rounded-xl overflow-hidden">
           <img src={url} alt="" className="w-full h-full object-cover" />
           <div className="absolute inset-0 bg-gradient-to-t from-surface-container-lowest/80 to-transparent" />
@@ -87,47 +88,43 @@ export function BuyPropertyModal() {
 
         {/* Steps */}
         <div className="space-y-3">
-          <div
-            className={`flex items-center gap-3 ${
-              step === 1 ? "" : "opacity-60"
-            }`}
-          >
+          {[
+            { n: 1, label: "Approve Token Spend" },
+            { n: 2, label: "Execute Acquisition" },
+          ].map(({ n, label }) => (
             <div
-              className={`w-8 h-8 rounded-full border-2 flex items-center justify-center shrink-0 ${
-                step >= 1 ? "border-primary" : "border-outline"
+              key={n}
+              className={`flex items-center gap-3 ${
+                step < n ? "opacity-40" : ""
               }`}
             >
-              {step > 1 ? (
-                <span className="material-symbols-outlined filled text-secondary text-sm">
-                  check_circle
-                </span>
-              ) : (
-                <span className="text-xs font-bold text-primary">1</span>
-              )}
+              <div
+                className={`w-8 h-8 rounded-full border-2 flex items-center justify-center shrink-0 ${
+                  step >= n ? "border-primary" : "border-outline"
+                }`}
+              >
+                {step > n ? (
+                  <span className="material-symbols-outlined filled text-secondary text-sm">
+                    check_circle
+                  </span>
+                ) : (
+                  <span
+                    className={`text-xs font-bold ${
+                      step >= n ? "text-primary" : "text-outline"
+                    }`}
+                  >
+                    {n}
+                  </span>
+                )}
+              </div>
+              <span className="text-on-surface font-medium font-body text-sm">
+                {label}
+              </span>
             </div>
-            <span className="text-on-surface font-medium font-body text-sm">
-              Approve Token Spend
-            </span>
-          </div>
-          <div
-            className={`flex items-center gap-3 ${
-              step === 2 ? "" : "opacity-40"
-            }`}
-          >
-            <div
-              className={`w-8 h-8 rounded-full border-2 flex items-center justify-center shrink-0 ${
-                step === 2 ? "border-primary" : "border-outline"
-              }`}
-            >
-              <span className="text-xs font-bold text-outline">2</span>
-            </div>
-            <span className="text-on-surface font-medium font-body text-sm">
-              Execute Acquisition
-            </span>
-          </div>
+          ))}
         </div>
 
-        {/* Action buttons */}
+        {/* Buttons */}
         <div className="space-y-3">
           <Button
             variant="primary"
