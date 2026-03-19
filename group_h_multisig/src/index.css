@@ -2,7 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ================= ROOT VARIABLES ================= */
 :root {
   --background: #fafafa;
   --foreground: #1a1a1a;
