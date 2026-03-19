@@ -1,8 +1,11 @@
 import type React from "react";
-import "../main-page.css";
+import "../token-interactions-page.css";
 import ListTile from "../components/ListTile";
+import type { ITokenDetail } from "../interface/ITokenDetail";
 
-const MainPage: React.FC = () => {
+const TokenInteractionPage = (
+  {tokenDetail} : {tokenDetail: ITokenDetail}
+) => {
   return (
     <div className="tf-root">
       <main className="tf-main">
@@ -10,10 +13,10 @@ const MainPage: React.FC = () => {
         <section className="token-header-card">
           <div className="token-info-left">
             <button className="back-button">← Back</button>
-            <div className="token-logo">CR</div>
+            <div className="token-logo">{tokenDetail.symbol.slice(0, 2)}</div>
             <div className="token-name-section">
               <h2>
-                CryptoX <span className="token-symbol">(CRX)</span>
+                {tokenDetail.name} <span className="token-symbol">({tokenDetail.symbol})</span>
               </h2>
               <div className="token-address">
                 0xA1b2C3d4...7890
@@ -23,11 +26,11 @@ const MainPage: React.FC = () => {
           </div>
           <div className="token-stats-right">
             <div className="stat-item">
-              <span className="stat-value">10,000,000</span>
+              <span className="stat-value">{tokenDetail.totalSupply}</span>
               <span className="stat-label">Total Supply</span>
             </div>
             <div className="stat-item">
-              <span className="stat-value">18</span>
+              <span className="stat-value">{tokenDetail.decimals}</span>
               <span className="stat-label">Decimals</span>
             </div>
           </div>
@@ -89,4 +92,4 @@ const MainPage: React.FC = () => {
   );
 };
 
-export default MainPage;
+export default TokenInteractionPage;
