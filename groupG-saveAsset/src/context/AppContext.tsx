@@ -1,5 +1,5 @@
 import React, { useState, type ReactNode } from "react"
-import { AppContext } from "../hooks/useAppContext"
+import { AppContext } from "../hooks/useMockContract"
 
 export interface Activity {
 	id: string

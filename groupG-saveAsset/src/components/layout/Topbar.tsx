@@ -1,7 +1,7 @@
 import React from "react"
 import { MdSearch, MdNotificationsNone, MdAccountBalanceWallet, MdMenu } from "react-icons/md"
 import { Input } from "../ui/Input"
-import { useAppContext } from "../../hooks/useAppContext"
+import { useAppContext } from "../../hooks/useMockContract"
 
 interface TopbarProps {
 	onMenuClick?: () => void

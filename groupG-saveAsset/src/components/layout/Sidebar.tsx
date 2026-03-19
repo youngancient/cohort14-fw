@@ -1,7 +1,7 @@
 import React from "react"
 import { MdSpaceDashboard, MdAccountBalanceWallet, MdHistory, MdSettings, MdClose } from "react-icons/md"
 import { Button } from "../ui/Button"
-import { useAppContext } from "../../hooks/useAppContext"
+import { useAppContext } from "../../hooks/useMockContract"
 
 interface SidebarProps {
 	onClose?: () => void
