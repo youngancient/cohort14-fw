@@ -1,1 +1,1 @@
-Live link --> https://cohort14-fw-sand.vercel.app/
+Live link --> https://ocean-property.vercel.app/
